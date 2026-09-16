@@ -1,0 +1,178 @@
+\ProvidesPackage{poly}[2023/04/29 Beamer Theme for PolyU by Crumble Jon.]
+
+\RequirePackage{tikz}
+\RequirePackage{xcolor}
+\RequirePackage{amsmath}
+\RequirePackage{amssymb}
+\RequirePackage{amsfonts}
+\RequirePackage{amsthm}
+\RequirePackage{verbatim}
+\RequirePackage{hyperref}
+\RequirePackage{listings}
+
+\definecolor{themegrey}{HTML}{58595B}
+\definecolor{skyblue}{HTML}{6BA4B8}
+\definecolor{themeblue}{HTML}{001A33}
+\definecolor{themeblue2}{HTML}{002B5E}
+
+\setbeamercolor{title}{fg=white}
+\setbeamercolor{author}{fg=white}
+\setbeamercolor{date}{fg=white}
+\setbeamercolor{institute}{fg=white}
+\setbeamercolor{head}{bg=themeblue2}
+
+\setbeamercolor{alerted text}{fg=themeblue}
+\setbeamercolor{normal text}{fg=darkgray, bg=white}
+\setbeamercolor{structure}{fg=themeblue}
+
+\setbeamercolor{jumbo}{bg=themeblue2}
+\setbeamercolor{progress bar}{fg=themeblue, bg=themegrey}
+\setbeamercolor{progress bar progress}{use=progress bar, bg=progress bar.fg}
+
+\setbeamercolor{block title}{use=structure, fg=white, bg=themeblue2}
+\setbeamercolor{block body}{use=structure, fg=darkgray, bg=themeblue2!10}
+
+\hypersetup{
+    colorlinks,
+    linkcolor=themeblue,
+    anchorcolor=blue,
+    citecolor=blue!80,
+    urlcolor=themeblue2,
+}
+
+\setbeamerfont{title}{series=\bfseries, size=\Large}
+\setbeamerfont{subtitle}{series=\mdseries, size=\normalsize}
+\setbeamerfont{author}{size=\small}
+\setbeamerfont{date}{size=\footnotesize}
+\setbeamerfont{institute}{size=\footnotesize}
+\setbeamerfont{alerted text}{series=\bfseries}
+\setbeamerfont{frametitle}{series=\bfseries}
+\setbeamerfont{framesubtitle}{series=\mdseries}
+\setbeamerfont{footline}{size=\scriptsize}
+\setbeamerfont{block title}{size=\normalsize, series=\bfseries}
+\setbeamerfont{block body}{size=\normalsize}
+
+\usefonttheme{serif}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{blocks}[rounded]
+\setbeamertemplate{itemize item}{\textbullet}
+\setbeamertemplate{itemize subitem}{\textemdash}
+\setbeamertemplate{itemize subsubitem}{\ensuremath{\circ}}
+
+\setlength{\parskip}{5pt}
+
+\lstdefinestyle{mystyle}{
+    commentstyle=\color{themeblue2!50},
+    keywordstyle=\color{themeblue},
+    numberstyle=\tiny\color{themegrey},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\scriptsize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=4,
+    xleftmargin=10pt,
+    xrightmargin=10pt,
+}
+\lstset{style=mystyle}
+
+\setbeamertemplate{headline}{
+    \ifnum\theframenumber=1
+    \else
+        \begin{beamercolorbox}[wd=\paperwidth,ht=40pt]{head}
+            \hspace{410pt}\raisebox{3pt}{\includegraphics[width=22pt]{source/logo-white.png}}
+        \end{beamercolorbox}
+    \fi
+}
+
+\setbeamertemplate{frametitle}{
+    \begin{picture}(0,0)
+        \ifx\insertframesubtitle\@empty
+            \put(0,27){\usebeamerfont{frametitle}\usebeamercolor[fg]{title}\insertframetitle}
+        \else
+            \put(0,32){\usebeamerfont{frametitle}\usebeamercolor[fg]{title} \insertframetitle}
+            \put(0,20){\usebeamerfont{framesubtitle}\usebeamercolor[fg]{title} \insertframesubtitle }
+        \fi
+    \end{picture}
+}
+
+\setbeamertemplate{title page}{
+    \begin{picture}(0,0)
+        \put(-24,50){\includegraphics[width=120pt]{source/logo-name.png}}
+        \put(-5,-77){
+            \begin{beamercolorbox}[wd=1.1\paperwidth,ht=140pt]{jumbo}
+            \end{beamercolorbox}
+        }
+        \put(243,-135){\includegraphics[width=250pt]{source/logo-trans}}
+        \put(0,25){
+            \begin{minipage}{300pt}
+                \usebeamerfont{title}\usebeamercolor[fg]{title}\inserttitle\par
+                \vspace{10pt}
+                \usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle
+            \end{minipage}
+        }
+        \put(0,-39){
+            \usebeamerfont{author}\usebeamercolor[fg]{author}\insertauthor
+        }
+        \put(0,-53){
+            \usebeamerfont{institute}\usebeamercolor[fg]{institute}\insertinstitute
+        }
+        \put(0,-67){
+            \usebeamerfont{date}\usebeamercolor[fg]{date}\insertdate
+        }
+        % \put(285,-118){\includegraphics[width=140pt]{source/tagline}}
+    \end{picture}
+}
+
+\defbeamertemplate{footline}{progress bar}{
+    \dimen0=\paperwidth
+    \divide\dimen0 by \inserttotalframenumber
+    \multiply\dimen0 by \insertframenumber
+    \edef\progressbarwidth{\the\dimen0}
+    \leavevmode
+    \ifnum\theframenumber=1
+    \else
+        \begin{beamercolorbox}[wd=\paperwidth,ht=2pt,dp=1pt]{progress bar}
+            \begin{beamercolorbox}[wd=\progressbarwidth,ht=2pt,dp=1pt]{progress bar progress}
+            \end{beamercolorbox}
+        \end{beamercolorbox}
+    \fi
+}
+\setbeamertemplate{footline}[progress bar]
+
+\newcommand{\backmatter}{
+    \begingroup
+    \setbeamertemplate{headline}{}
+    \setbeamertemplate{footline}{}
+    \begin{frame}[c]{}
+        \begin{picture}(0,0)
+            \put(-28.5,-25){\includegraphics[width=1.01\paperwidth]{source/last-frame}}
+        \end{picture}
+    \end{frame}
+    \endgroup
+}
+
+\setbeamertemplate{section in toc}{
+    $\blacktriangleright$~\textbf{\inserttocsection}
+}
+\setbeamertemplate{subsection in toc}{}
+\setbeamertemplate{frametitle continuation}{}
+
+\AtBeginSection[]
+{
+    \begingroup
+    \begin{frame}{Sumário}{}
+        \begin{picture}(0,0)
+            \put(-42,-170){\includegraphics[width=1.1\paperwidth]{source/silhouette}}
+        \end{picture}
+        \tableofcontents[currentsection]
+    \end{frame}
+    \endgroup
+}
