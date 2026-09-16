@@ -20,29 +20,30 @@
 			0, & \text{caso contrário}
 		\end{cases}
 	\end{equation*}
-\end{frame}
-
-\begin{frame}{Amostragem Natural}{Definição do Pulso Fundamental $p_0(t)$}
+	
 	\vfill
 	\centering
 	\begin{tikzpicture}
 		\begin{axis}[
 			pamaxis, 
 			ylabel={$p_0(t)$}, 
-			xmin=-0.6, xmax=0.6, 
+			ylabel style={at={(axis cs:0,1.45)}, anchor=south},
+			xmin=-0.3, xmax=0.3, 
 			ymin=-0.2, ymax=1.4,
-			xlabel={$t$}
+			xlabel={$t$},
+			xlabel style={at={(axis cs:0.3,0)}, anchor=west}
 			]
 			% Pulso p0(t)
 			\draw[sinalcor, line width=1.2pt, fill=sinalcor!20] 
-			(axis cs:-0.2, 0) -- (axis cs:-0.2, 1) -- (axis cs:0.2, 1) -- (axis cs:0.2, 0) -- cycle;
+			(axis cs:-0.1, 0) -- (axis cs:-0.1, 1) -- (axis cs:0.1, 1) -- (axis cs:0.1, 0) -- cycle;
 			
 			% Marcações do eixo t (-tau/2 e tau/2)
-			\node[below, font=\small] at (axis cs:-0.2, 0) {$-\frac{\tau}{2}$};
-			\node[below, font=\small] at (axis cs:0.2, 0) {$\frac{\tau}{2}$};
+			\node[below, font=\small] at (axis cs:-0.1, 0) {$-\frac{\tau}{2}$};
+			\node[below, font=\small] at (axis cs:0.1, 0) {$\frac{\tau}{2}$};
 			\node[left, font=\small] at (axis cs:0, 1.1) {$1$};
 		\end{axis}
 	\end{tikzpicture}
+	
 \end{frame}
 
 % Definição do Trem de Pulsos p(t)
@@ -54,28 +55,39 @@
 		p(t) = \sum_{k=-\infty}^{\infty} p_0(t - k T_s)
 	\end{equation*}
 	
-\end{frame}
-
-\begin{frame}{Amostragem Natural}{Trem Periódico de Pulsos $p(t)$}
 	\vfill
 	\centering
 	\begin{tikzpicture}
-		\begin{axis}[pamaxis, ylabel={$p(t)$}, ymin=-0.2, ymax=1.4]
+		\begin{axis}[
+			pamaxis, 
+			width=1.05\textwidth,
+			height=3.5cm,
+			ylabel={$p(t)$}, 
+			ylabel style={at={(axis cs:0,1.45)}, anchor=south},
+			xmin=-0.3, xmax=0.3, 
+			ymin=-0.2, ymax=1.4,
+			xlabel={$t$},
+			xlabel style={at={(axis cs:0.3,0)}, anchor=west}
+			]
 			\addplot[draw=none] {0};
 			\pgfplotsextra{
-				\foreach \n in {0,...,\Nam}{
+				\foreach \n in {-2,...,2}{
 					\pgfmathsetmacro\xa{\n*\Ts - \Tau/2}
 					\pgfmathsetmacro\xb{\n*\Ts + \Tau/2}
 					\draw[sinalcor, line width=1pt, fill=sinalcor!20] 
 					(axis cs:\xa,0) rectangle (axis cs:\xb,1);
 				}
 			}
-			\marcaTs
+			\node[below, font=\small] at (axis cs:-0.025, 0) {$-\frac{\tau}{2}$};
+			\node[below, font=\small] at (axis cs:0.022, 0) {$\frac{\tau}{2}$};
+			\node[left, font=\small] at (axis cs:0, 1.1) {$1$};
 		\end{axis}
 	\end{tikzpicture}
 	\par\vspace{0.3em}
 	{\small Trem de pulsos periódico com período $T_s$ e largura de pulso $\tau$.}
 \end{frame}
+
+
 
 % Conexão e Série de Fourier de p(t)
 \begin{frame}{Amostragem Natural}{Expansão em Série de Fourier de $p(t)$}
@@ -144,118 +156,126 @@
 % Amostragem Natural: sobreposição x(t) + p(t), e produto s(t) = x(t)·p(t)
 \begin{frame}{Amostragem Natural}{Sobreposição e Produto}
 	\centering
-	\begin{minipage}[c][0.72\textheight][c]{0.95\textwidth}
+	
+	% Parâmetros
+	\def\Ts{0.2}
+	\def\Tau{0.05}
+	\def\Nam{5}
+	
+	\begin{minipage}[c]{0.48\textwidth}
 		\centering
 		
-		% Parâmetros locais (Ts = 0.2 s, Tau = 0.05 s, 5 pulsos)
-		\def\Ts{0.2}
-		\def\Tau{0.05}
-		\def\Nam{5}
+		\begin{tikzpicture}
+			\begin{axis}[
+				pamaxis,
+				width=\textwidth,
+				height=4.5cm,
+				ylabel={$x(t)$ e $p(t)$},
+				ylabel style={at={(axis cs:0,1.45)}, anchor=south},
+				trig format=rad,
+				ymin=-0.2, ymax=1.45,
+				xmin=-0.1, xmax=1.1
+				]
+				
+				% Trem de pulsos p(t)
+				\pgfplotsextra{%
+					\foreach \n in {0,...,\Nam}{%
+						\pgfmathsetmacro\xa{\n*\Ts - \Tau/2}%
+						\pgfmathsetmacro\xb{\n*\Ts + \Tau/2}%
+						\draw[
+						gray!60,
+						line width=.7pt,
+						fill=gray!15
+						]
+						(axis cs:\xa,0)
+						rectangle
+						(axis cs:\xb,1);
+					}%
+				}
+				
+				% x(t) = cos(2*pi*2*t)
+				\addplot[
+				sinalcor,
+				line width=1.4pt,
+				smooth,
+				domain=0:1,
+				samples=300
+				]
+				{cos(4*pi*x)};
+				
+			\end{axis}
+		\end{tikzpicture}
 		
-		\only<1>{
-			\begin{tikzpicture}
-				\begin{axis}[
-					pamaxis,
-					ylabel={$x(t)$ e $p(t)$},
-					ylabel style={at={(axis cs:0,1.45)}, anchor=south}, % Centraliza sobre o eixo x=0
-					trig format=rad,
-					ymin=-0.2, ymax=1.45
-					]
-					% Trem de pulsos p(t)
-					\pgfplotsextra{%
-						\foreach \n in {0,...,\Nam}{%
-							\pgfmathsetmacro\xa{\n*\Ts - \Tau/2}%
-							\pgfmathsetmacro\xb{\n*\Ts + \Tau/2}%
-							\draw[gray!60, line width=.7pt, fill=gray!15]
-							(axis cs:\xa,0) rectangle (axis cs:\xb,1);
-						}%
-					}
-					% x(t) = cos(2*pi*2*t)
-					\addplot[sinalcor, line width=1.4pt, smooth, domain=0:1, samples=300]
-					{cos(4*pi*x)};
-				\end{axis}
-			\end{tikzpicture}\par
-			\small Sinal analógico $x(t)=\cos(2\pi\cdot 2t)$ sobreposto ao trem de pulsos $p(t)$ (largura $\tau$, período $T_s$).}
+		\vspace{0.2em}
 		
-		% produto s(t)
-		\only<2>{%
-			\begin{tikzpicture}
-				\begin{axis}[
-					pamaxis,
-					ylabel={$s(t) = x(t) \cdot p(t)$},
-					ylabel style={at={(axis cs:0,1.45)}, anchor=south}, % Centraliza sobre o eixo x=0
-					trig format=rad,
-					ymin=-0.2, ymax=1.45
-					]
-					% Envoltória x(t) como referência tracejada
-					\addplot[gray!60, dashed, line width=.7pt, smooth, domain=0:1, samples=300]
-					{cos(4*pi*x)};
-					% Pulsos de amostragem natural: topo SEGUE x(t)
-					\pgfplotsextra{%
-						\foreach \n in {0,...,\Nam}{%
-							\pgfmathsetmacro\xa{\n*\Ts - \Tau/2}%
-							\pgfmathsetmacro\xb{\n*\Ts + \Tau/2}%
-							\draw[sinalcor, line width=.9pt, fill=sinalcor!25]
-							(axis cs:\xa,0) --
-							(axis cs:\xa,{cos(4*pi*\xa)}) --
-							plot[domain=\xa:\xb, samples=25, smooth]
-							(axis cs:\x,{cos(4*pi*\x)}) --
-							(axis cs:\xb,{cos(4*pi*\xb)}) --
-							(axis cs:\xb,0) -- cycle;
-						}%
-					}
-				\end{axis}
-			\end{tikzpicture}\par
-			\small Sinal amostrado naturalmente $s(t)=x(t)\cdot p(t)$. O topo de cada pulso \textbf{acompanha a forma de $x(t)$} — característica da amostragem natural.}
-		
-		% ---------------------------------------------------- (3) destaque: onde p(t)=0 vs p(t)=1
-		\only<3>{%
-			\begin{tikzpicture}
-				\begin{axis}[
-					pamaxis,
-					ylabel={$s(t)$},
-					ylabel style={at={(axis cs:0,1.45)}, anchor=south}, % Centraliza sobre o eixo x=0
-					trig format=rad,
-					ymin=-0.2, ymax=1.45
-					]
-					% x(t) como referência tracejada
-					\addplot[gray!60, dashed, line width=.7pt, smooth, domain=0:1, samples=300]
-					{cos(4*pi*x)};
-					% Regiões onde p(t) = 0  ->  s(t) = 0 (faixas cinzas claras)
-					\pgfplotsextra{%
-						\foreach \n in {0,...,\Nam}{%
-							\pgfmathsetmacro\xa{\n*\Ts + \Tau/2}%
-							\pgfmathsetmacro\xb{(\n+1)*\Ts - \Tau/2}%
-							\ifnum\n<\Nam
-							\draw[black!10, fill=black!5]
-							(axis cs:\xa,-0.15) rectangle (axis cs:\xb,1.35);
-							\fi
-						}%
-					}
-					% Pulsos de amostragem natural
-					\pgfplotsextra{%
-						\foreach \n in {0,...,\Nam}{%
-							\pgfmathsetmacro\xa{\n*\Ts - \Tau/2}%
-							\pgfmathsetmacro\xb{\n*\Ts + \Tau/2}%
-							\draw[sinalcor, line width=.9pt, fill=sinalcor!25]
-							(axis cs:\xa,0) --
-							(axis cs:\xa,{cos(4*pi*\xa)}) --
-							plot[domain=\xa:\xb, samples=25, smooth]
-							(axis cs:\x,{cos(4*pi*\x)}) --
-							(axis cs:\xb,{cos(4*pi*\xb)}) --
-							(axis cs:\xb,0) -- cycle;
-						}%
-					}
-					% Rótulos das duas regiões
-					\node[font=\tiny, anchor=north] at (axis cs:0.30,-0.02)
-					{$p(t)=0 \Rightarrow s(t)=0$};
-					\node[font=\tiny, anchor=north, text=sinalcor] at (axis cs:0.05,-0.02)
-					{$p(t)=1$};
-				\end{axis}
-			\end{tikzpicture}\par
-			\small Onde $p(t)=0$, o produto é nulo (faixas cinzas). Onde $p(t)=1$ (dentro de cada pulso), o produto reproduz $x(t)$ — o topo \textbf{segue} o cosseno.}
+		{\small
+			$x(t)=\cos(2\pi\cdot2t)$ sobreposto ao
+			trem de pulsos $p(t)$.}
 		
 	\end{minipage}
+	\hfill
+	\begin{minipage}[c]{0.48\textwidth}
+		\centering
+		
+		\begin{tikzpicture}
+			\begin{axis}[
+				pamaxis,
+				width=\textwidth,
+				height=4.5cm,
+				ylabel={$s(t)=x(t)p(t)$},
+				ylabel style={at={(axis cs:0,1.45)}, anchor=south},
+				trig format=rad,
+				ymin=-0.2, ymax=1.45,
+				xmin=-0.1, xmax=1.1
+				]
+				
+				% Envoltória x(t) como referência
+				\addplot[
+				gray!60,
+				dashed,
+				line width=.7pt,
+				smooth,
+				domain=0:1,
+				samples=300
+				]
+				{cos(4*pi*x)};
+				
+				% Pulsos de amostragem natural
+				\pgfplotsextra{%
+					\foreach \n in {0,...,\Nam}{%
+						\pgfmathsetmacro\xa{\n*\Ts - \Tau/2}%
+						\pgfmathsetmacro\xb{\n*\Ts + \Tau/2}%
+						
+						\draw[
+						sinalcor,
+						line width=.9pt,
+						fill=sinalcor!25
+						]
+						(axis cs:\xa,0) --
+						(axis cs:\xa,{cos(4*pi*\xa)}) --
+						plot[
+						domain=\xa:\xb,
+						samples=25,
+						smooth
+						]
+						(axis cs:\x,{cos(4*pi*\x)}) --
+						(axis cs:\xb,{cos(4*pi*\xb)}) --
+						(axis cs:\xb,0) --
+						cycle;
+					}%
+				}
+				
+			\end{axis}
+		\end{tikzpicture}
+		
+		\vspace{0.2em}
+		
+		{\small
+			$s(t)=x(t)\cdot p(t)$. O topo de cada pulso
+			\textbf{acompanha $x(t)$}.}
+		
+	\end{minipage}
+	
 \end{frame}
 
 % Domínio da Frequência: Convolução e Espectro Final
@@ -284,31 +304,174 @@
 	\end{align*}
 \end{frame}
 
-% Frame 2: Espectro Final do Sinal Amostrado
+% Espectro Final do Sinal Amostrado
+% Espectro Final do Sinal Amostrado
 \begin{frame}{Amostragem Natural}{Espectro Final do Sinal Amostrado}
 	
-	Substituindo o coeficiente $P[k] = \frac{\tau}{T_s} \text{sinc}(k f_s \tau)$, temos a expressão espectral final:
+	Substituindo o coeficiente
+	$P[k] = \frac{\tau}{T_s}\text{sinc}(k f_s\tau)$,
+	temos:
 	
 	\begin{equation*}
-		S(f) = \sum_{k=-\infty}^{\infty} \frac{\tau}{T_s} \text{sinc}(k f_s \tau) X(f - k f_s)
+		S(f) =
+		\sum_{k=-\infty}^{\infty}
+		\frac{\tau}{T_s}
+		\text{sinc}(k f_s\tau)
+		X(f-kf_s)
 	\end{equation*}
 	
-	\vfill
+	\vspace{-0.4em}
+	
 	\centering
+	
+	% =========================================================
+	% PARÂMETROS USADOS APENAS PARA CONSTRUIR A SIMULAÇÃO
+	% =========================================================
+	
+	\def\fs{5}
+	\def\Ts{0.2}
+	\def\Tau{0.05}
+	\def\fzero{1}
+	
 	\begin{tikzpicture}
 		\begin{axis}[
-			pamaxis, 
-			ylabel={$S(f)$}, 
+			pamaxis,
+			width=0.85\textwidth,
+			height=5.0cm,
 			xlabel={$f$},
-			xmin=-15, xmax=15, 
-			ymin=-0.1, ymax=0.6,
+			ylabel={$S(f)$},
+			xmin=-13, xmax=13,
+			ymin=-0.13, ymax=0.32,
 			axis lines=middle,
-			trig format=rad
+			xtick={-10,-5,0,5,10},
+			xticklabels={
+				$-2f_s$,
+				$-f_s$,
+				$0$,
+				$f_s$,
+				$2f_s$
+			},
+			ytick={0},
+			yticklabels={$0$},
+			grid=none,
+			clip=false
 			]
-			% Envelope Sinc
-			% Réplicas Espectrais centradas em k*fs
+			
+			% =========================================================
+			% ENVELOPE DOS COEFICIENTES P[k]
+			% =========================================================
+			
+			\addplot[
+			sinalcor,
+			dashed,
+			thin,
+			domain=-2.8:2.8,
+			samples=300
+			]
+			{
+				0.25 *
+				abs(
+				sin(deg(pi*x*0.28))
+				/
+				(pi*x*0.25)
+				)
+			};
+			
+			
+			% =========================================================
+			% IMPULSOS ESPECTRAIS
+			% x(t) = cos(2*pi*f0*t)
+			% =========================================================
+			
+			% k = 0
+			
+			\draw[sinalcor, very thick]
+			(axis cs:-1,0) -- (axis cs:-1,0.25);
+			
+			\draw[sinalcor, very thick]
+			(axis cs:1,0) -- (axis cs:1,0.25);
+			
+			
+			% k = +1
+			
+			\draw[sinalcor, very thick]
+			(axis cs:4,0) -- (axis cs:4,0.225);
+			
+			\draw[sinalcor, very thick]
+			(axis cs:6,0) -- (axis cs:6,0.225);
+			
+			
+			% k = -1
+			
+			\draw[sinalcor, very thick]
+			(axis cs:-6,0) -- (axis cs:-6,0.225);
+			
+			\draw[sinalcor, very thick]
+			(axis cs:-4,0) -- (axis cs:-4,0.225);
+			
+			
+			% k = +2
+			
+			\draw[sinalcor, very thick]
+			(axis cs:9,0) -- (axis cs:9,0.159);
+			
+			\draw[sinalcor, very thick]
+			(axis cs:11,0) -- (axis cs:11,0.159);
+			
+			
+			% k = -2
+			
+			\draw[sinalcor, very thick]
+			(axis cs:-11,0) -- (axis cs:-11,0.159);
+			
+			\draw[sinalcor, very thick]
+			(axis cs:-9,0) -- (axis cs:-9,0.159);
+			
+			% =========================================================
+			% PONTOS NO TOPO DOS IMPULSOS
+			% =========================================================
+			
+			\addplot[
+			only marks,
+			mark=*,
+			mark size=1.5pt
+			]
+			coordinates {
+				(-1,0.25)
+				(1,0.25)
+				(-6,0.225)
+				(-4,0.225)
+				(4,0.225)
+				(6,0.225)
+				(-11,0.159)
+				(-9,0.159)
+				(9,0.159)
+				(11,0.159)
+			};
+			
+			
+			
+			% =========================================================
+			% INDICAÇÃO DA FREQUÊNCIA DO COSSENO
+			% =========================================================
+			
+			\draw[
+			<->,
+			thick
+			]
+			(axis cs:0,-0.05) --
+			node[below=1pt] {$f_0$}
+			(axis cs:1,-0.05);
+			
+			
 		\end{axis}
 	\end{tikzpicture}
-	\par\vspace{0.3em}
-	{\small Réplicas de $X(f)$ repetidas a cada $f_s$, atenuadas pelo envelope $\frac{\tau}{T_s}\text{sinc}(k f_s \tau)$.}
+	
+	\vspace{-0.1em}
+	
+	{\small
+		Para $x(t)=\cos(2\pi f_0t)$, cada réplica de $X(f)$
+		possui dois impulsos, deslocados de $k f_s$ e ponderados por $P[k]$.
+	}
+	
 \end{frame}

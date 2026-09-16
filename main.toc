@@ -1,2 +1,1 @@
 \beamer@sectionintoc {1}{Amostragem Natural}{2}{0}{1}
-\beamer@sectionintoc {2}{Summary}{20}{0}{2}
