@@ -1,22 +1,9 @@
-% Método Ideal:
-% - Descrição Analítica
-% - Simulação de amostragem
-% - Filtro de reconstrução
-% - Simulação de reconstrução
+% ============================================================================
+%  Parâmetros do estudo — vêm ANTES da fundamentação teórica, porque todos os
+%  métodos (ideal, natural e topo-plano) são demonstrados com estes valores.
+% ============================================================================
 
-% Método Natural:
-% - Descrição Analítica
-% - Simulação de amostragem
-% - Filtro de reconstrução
-% - Simulação de reconstrução
-
-% Método Topo-Plano:
-% - Descrição Analítica
-% - Simulação de amostragem
-% - Filtro de reconstrução
-% - Simulação de reconstrução
-
-\section{Desenvolvimento analítico} %talvez mudar o nome dessa seção 
+\section{Parâmetros do Estudo}
 
 \begin{frame}[allowframebreaks]{Parâmetros fixos}
     \small
@@ -60,22 +47,26 @@
     \]
 
     A partir dessa preparação, utiliza-se a equação filtrada em banda para realizar as amostragens: \begin{align*} x_f(t) = \cos(2\pi \cdot 2t) \end{align*}
-    
+
 \end{frame}
 
-\begin{frame}[fragile]{Amostragem ideal}
-    Para a amostragem ideal, multiplica-se o sinal por um trem de impulsos:
-    $$X_s(f) = f_s \cdot \sum_{k=-\infty}^{\infty} X_f(f - k f_s) = 5 \cdot \sum_{k=-\infty}^{\infty} X_f(f - 5k)$$
-    
-    \textbf{Análise das componentes:}
-    $$
-    \left.\begin{matrix}
-    k=0: \pm 2\text{ Hz} \\
-    k=1: 3 \text{ e } 7\text{ Hz} \\
-    k=-1: -7 \text{ e } -3\text{ Hz} \\
-    k=2: 8 \text{ e } 12\text{ Hz}
-    \end{matrix}\right\} \text{componentes em } \pm 2, \pm 3, \pm 7, \pm 8, \pm 12, \dots
-    $$
-\end{frame}
-    
+\begin{frame}{Parâmetros fixos}{Resumo}
+    \small
+    Estes são os valores usados em \textbf{todas} as demonstrações e figuras a seguir:
+    \begin{center}
+    \begin{tabular}{ll}
+        \hline
+        Sinal amostrado (pós anti-aliasing) & $x_f(t) = \cos(2\pi \cdot 2t)$ \\
+        Frequência do sinal & $f_0 = f_{max} = 2$~Hz \\
+        Corte do anti-aliasing & $f_c = 8$~Hz \\
+        Frequência de amostragem & $f_s = 5$~Hz \\
+        Período de amostragem & $T_s = 0{,}2$~s \\
+        Banda de guarda & $f_s - 2f_{max} = 1$~Hz \\
+        \hline
+    \end{tabular}
+    \end{center}
 
+    \vspace{0.5em}
+    Para cada método, o roteiro é o mesmo: descrição analítica geral, aplicação a
+    $x_f(t)$ com estes parâmetros e, por fim, o filtro de reconstrução.
+\end{frame}

@@ -1,8 +1,36 @@
-% Amostragem
-% 	O Teorema da Amostragem (Nyquist-Shannon)
-% 	Aliasing (Subamostragem)
-% 	Filtro Anti-Aliasing 
+% ============================================================================
+%  Fundamentação Teórica
+%  Abertura da seção: o que os três métodos têm em comum e o que os diferencia.
+%  Em seguida, cada método é desenvolvido na ordem:
+%     (1) descrição analítica geral  (2) aplicação aos parâmetros fixos
+%     (3) reconstrução               (4) gancho para o método seguinte
+% ============================================================================
 
 \section{Fundamentação Teórica}
 
+\begin{frame}{Amostragem}{Estrutura Comum aos Três Métodos}
+    \small
+    Amostrar é registrar o sinal contínuo apenas nos instantes $t = nT_s$. Os três
+    métodos partem do mesmo trem de impulsos e diferem somente no \textbf{pulso} que
+    carrega cada amostra:
+    \begin{equation*}
+        x_{am}(t) = \underbrace{\left[\, x_f(t) \cdot \sum_{n=-\infty}^{\infty} \delta(t - nT_s) \right]}_{\text{comum aos três métodos}}
+        \;\longrightarrow\; \text{pulso de cada método}
+    \end{equation*}
 
+    \begin{center}
+    \begin{tabular}{lll}
+        \hline
+        \textbf{Método} & \textbf{Amostra transportada por} & \textbf{Consequência} \\
+        \hline
+        Ideal & impulso $\delta(t - nT_s)$ & recuperação exata \\
+        Natural & pulso que \textit{acompanha} $x_f(t)$ & espectro ponderado por $\mathrm{sinc}$ \\
+        Topo-plano & pulso de topo constante $h(t)$ & $\mathrm{sinc}$ + atraso $\tau/2$ \\
+        \hline
+    \end{tabular}
+    \end{center}
+
+    \vspace{0.5em}
+    Começamos pelo \textbf{ideal}: é o caso sem pulso, e portanto a referência com que
+    os outros dois serão comparados.
+\end{frame}

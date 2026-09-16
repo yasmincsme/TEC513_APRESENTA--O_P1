@@ -108,115 +108,13 @@ Resultado da convolução: PAM com topo plano ($d = \tau/T_s = 1/3$).}
 %  após o passa-baixas e após o equalizador.
 %  Parâmetros e macros (prefixo \ft...) definidos no main.tex.
 % ============================================================================
-\begin{frame}{Método Topo-Plano}{Representação Gráfica no Domínio do Tempo}
-\centering
-\begin{tikzpicture}
-\begin{groupplot}[
-  group style={group size=4 by 1, horizontal sep=0.85cm},
-  ftaxis
-]
 
-% (a) Sinal original
-\nextgroupplot[title={(a) Sinal original\\[1pt]{\tiny\ftstrut $x(t)=\cos(2\pi\cdot 2t)$}}]
-  \addplot[ftazul, thick, domain=0:\fttmax, samples=400]
-    {cos(deg(2*pi*\ftfzero*x))};
-
-% (b) Sinal amostrado (topo plano)
-\nextgroupplot[title={(b) Sinal amostrado\\[1pt]{\tiny\ftstrut $x_p(t)$}}]
-  \addplot[gray!55, dashed, domain=0:\fttmax, samples=400]
-    {cos(deg(2*pi*\ftfzero*x))};
-  \addplot[ftlaranja!90!black, semithick, fill=ftlaranja!22, area legend] coordinates {\ftpulsos};
-  \addplot[ycomb, ftazul, thin, mark=*, mark size=1.4pt,
-    mark options={fill=ftazul, draw=white, line width=0.3pt}] coordinates {\ftamostras};
-
-% (c) Após o passa-baixas: abertura + deslocamento
-\nextgroupplot[title={(c) Após o passa-baixas\\[1pt]{\tiny\ftstrut $x_r'(t)$}},
-  clip mode=individual]
-  \draw[black!45, densely dashed, thin] (axis cs:0,1) -- (axis cs:\fttmax,1);
-  \addplot[gray!55, dashed, domain=0:\fttmax, samples=400]
-    {cos(deg(2*pi*\ftfzero*x))};
-  \addplot[ftroxo, thick, domain=0:\fttmax, samples=400]
-    {\ftA*cos(deg(2*pi*\ftfzero*(x-\fttau/2)))};
-  \draw[gray, densely dotted] (axis cs:\ftpico,1) -- (axis cs:\ftpico,1.14);
-  \draw[ftroxo, densely dotted] (axis cs:\ftpicoatr,\ftA) -- (axis cs:\ftpicoatr,1.14);
-  \node[font=\tiny, anchor=south west, inner sep=1pt] at (axis cs:\ftpicoatr,1.12) {atraso $\tau/2$};
-
-% (d) Após o equalizador: amplitude recuperada, atraso mantido
-\nextgroupplot[title={(d) Após o equalizador\\[1pt]{\tiny\ftstrut $x_r(t)$}},
-  clip mode=individual]
-  \draw[black!45, densely dashed, thin] (axis cs:0,1) -- (axis cs:\fttmax,1);
-  \addplot[gray!55, dashed, domain=0:\fttmax, samples=400]
-    {cos(deg(2*pi*\ftfzero*x))};
-  \addplot[ftverde, thick, domain=0:\fttmax, samples=400]
-    {cos(deg(2*pi*\ftfzero*(x-\fttau/2)))};
-  \draw[gray, densely dotted] (axis cs:\ftpico,1) -- (axis cs:\ftpico,1.14);
-  \draw[ftverde, densely dotted] (axis cs:\ftpicoatr,1) -- (axis cs:\ftpicoatr,1.14);
-  \node[font=\tiny, anchor=south west, inner sep=1pt] at (axis cs:\ftpicoatr,1.12) {atraso $\tau/2$};
-
-\end{groupplot}
-\end{tikzpicture}
-
-\vspace{0.2em}
-\mbox{\scriptsize
-\tikz[baseline=-0.6ex]\draw[gray!55, dashed] (0,0) -- (0.45,0); $x(t)$\hspace{0.7em}
-\tikz[baseline=-0.6ex]\draw[ftlaranja!90!black, semithick, fill=ftlaranja!22] (0,-0.08) rectangle (0.5,0.12);\hspace{3pt}pulsos de largura $\tau$\hspace{0.7em}
-\tikz[baseline=-0.6ex]\fill[ftazul] (0,0) circle (1.4pt); \,amostras $x(nT_s)$\hspace{0.7em}
-\tikz[baseline=-0.6ex]\draw[ftroxo, thick] (0,0) -- (0.45,0); após o passa-baixas\hspace{0.7em}
-\tikz[baseline=-0.6ex]\draw[ftverde, thick] (0,0) -- (0.45,0); após o equalizador}
-\end{frame}
 
 % ============================================================================
 %  Domínio da frequência: espectro original, amostrado,
 %  após o passa-baixas e após o equalizador.
 % ============================================================================
-\begin{frame}{Método Topo-Plano}{Representação Gráfica no Domínio da Frequência}
-\centering
-\begin{tikzpicture}
-\begin{groupplot}[
-  group style={group size=4 by 1, horizontal sep=0.85cm},
-  ftfreqaxis
-]
 
-% (a) Espectro do sinal original
-\nextgroupplot[title={(a) Espectro original\\[1pt]{\tiny\ftstrut $X(f)=\frac{1}{2}[\delta(f-2)+\delta(f+2)]$}}]
-  \addplot[ftimpulso, ftazul] coordinates {(-\ftfzero,0.5) (\ftfzero,0.5)};
-
-% (b) Espectro amostrado: réplicas em n f_s ponderadas pelo sinc
-\nextgroupplot[title={(b) Sinal amostrado\\[1pt]{\tiny\ftstrut $X_p(f)$}}]
-  \addplot[black!55, densely dashed, domain=-\ftfmax:\ftfmax, samples=500]
-    {0.5*abs(sin(deg(pi*x*\fttau))/(pi*x*\fttau))};
-  \addplot[ftimpulso, ftlaranja!90!black] coordinates {\ftreplicas};
-  \addplot[ftimpulso, ftazul] coordinates {(-\ftfzero,\ftAmeio) (\ftfzero,\ftAmeio)};
-
-% (c) Após o passa-baixas: só a banda base, atenuada pelo sinc
-\nextgroupplot[title={(c) Após o passa-baixas\\[1pt]{\tiny\ftstrut $X_r'(f)$}}]
-  \draw[black!45, densely dashed, thin] (axis cs:-\ftfmax,0.5) -- (axis cs:\ftfmax,0.5);
-  \draw[ftroxo, densely dashed, fill=ftroxo!8] (axis cs:-\ftfc,0) rectangle (axis cs:\ftfc,0.6);
-  \node[font=\tiny, anchor=south, inner sep=1pt, yshift=4pt, ftroxo] at (axis cs:0,0.6) {$H_{PB}(f)$};
-  \addplot[ftimpulso, ftroxo] coordinates {(-\ftfzero,\ftAmeio) (\ftfzero,\ftAmeio)};
-
-% (d) Após o equalizador: amplitude recuperada, fase linear mantida
-\nextgroupplot[title={(d) Após o equalizador\\[1pt]{\tiny\ftstrut $X_r(f)$}}]
-  \draw[black!45, densely dashed, thin] (axis cs:-\ftfmax,0.5) -- (axis cs:\ftfmax,0.5);
-  \addplot[ftverde, densely dashed, domain=-\ftfc:\ftfc, samples=100, fill=ftverde!8]
-    {0.5/(sin(deg(pi*x*\fttau+1e-6))/(pi*x*\fttau+1e-6))} \closedcycle;
-  \node[font=\tiny, anchor=south, inner sep=1pt, yshift=4pt, ftverde!70!black] at (axis cs:0,0.6) {$H_{eq}(f)\propto\frac{1}{\mathrm{sinc}(f\tau)}$};
-  \addplot[ftimpulso, ftverde] coordinates {(-\ftfzero,0.5) (\ftfzero,0.5)};
-
-\end{groupplot}
-\end{tikzpicture}
-
-\vspace{0.2em}
-\mbox{\scriptsize
-\tikz[baseline=-0.6ex]\draw[black!55, densely dashed] (0,0) -- (0.45,0); envelope $\frac{1}{2}|\mathrm{sinc}(f\tau)|$ \hspace{0.7em}
-\tikz[baseline=-0.6ex]\draw[ftazul, thick] (0,0) -- (0.45,0); banda base\hspace{0.7em}
-\tikz[baseline=-0.6ex]\draw[ftlaranja!90!black, thick] (0,0) -- (0.45,0); réplicas em $nf_s \pm 2$}
-
-\vspace{2pt}
-\mbox{\scriptsize
-\tikz[baseline=-0.6ex]\draw[ftroxo, densely dashed, fill=ftroxo!8] (0,-0.08) rectangle (0.5,0.12);\hspace{3pt}passa-baixas\hspace{0.7em}
-\tikz[baseline=-0.6ex]\draw[ftverde, densely dashed, fill=ftverde!8] (0,-0.08) rectangle (0.5,0.12);\hspace{3pt}equalizador}
-\end{frame}
 
 % ============================================================================
 %  Demonstração no domínio do tempo (3 slides)
@@ -427,7 +325,7 @@ Para $x(t)=\cos(2\pi\cdot 2t)$, a amplitude cai para $A = \mathrm{sinc}(2\tau)$.
 \begin{tikzpicture}
 \begin{groupplot}[group style={group name=g, group size=3 by 1, horizontal sep=1.3cm}, ftdemot, height=0.18\textheight]
 \nextgroupplot[title={(a) Espectro do pulso\\[1pt]{\tiny\ftstrut $|H(f)|/\tau$}},
-  xmin=-\ftfmax, xmax=\ftfmax, ymin=0, ymax=1.3, xtick={-14,-7,0,7,14}, ytick={0,0.5,1},
+  xmin=-\ftfmax, xmax=\ftfmax, ymin=0, ymax=1.3, xtick={-10,-5,0,5,10}, ytick={0,0.5,1},
   extra y ticks={}, xlabel={$f$ (Hz)}]
   \fill[ftroxo!8] (axis cs:-\ftfc,0) rectangle (axis cs:\ftfc,1.3);
   \addplot[ftlaranja!90!black, thick, domain=-\ftfmax:\ftfmax, samples=400]
@@ -484,7 +382,7 @@ A fase é linear: todas as frequências sofrem o mesmo atraso $\tau/2$, sem dist
 \begin{tikzpicture}
 \begin{groupplot}[group style={group name=g, group size=3 by 1, horizontal sep=1.3cm}, ftdemot, height=0.18\textheight]
 \nextgroupplot[title={(a) Pulso centrado e causal\\[1pt]{\tiny\ftstrut $h_c(t)$ e $h(t)$}},
-  xmin=-0.12, xmax=0.2, xtick={-0.1,0,0.1,0.2}]
+  xmin=-0.15, xmax=0.28, xtick={-0.1,0,0.1,0.2}]
   \draw[gray, densely dashed, thick] (axis cs:-\tk/2,0) rectangle (axis cs:\tk/2,1);
   \draw[ftlaranja!90!black, thick, fill=ftlaranja!22] (axis cs:0,0) rectangle (axis cs:\tk,1);
   \draw[black!80, ->, >=stealth] (axis cs:0,1.12) -- (axis cs:\tk/2,1.12);
@@ -591,4 +489,115 @@ $1/\tau \geq f_s$, fica fora de $|f| < f_s/2$.
 \end{tikzpicture}
 \end{center}
 \pause\pause
+\end{frame}
+
+% ============================================================================
+%  Visão geral do processo completo (tempo e frequência).
+%  Fica DEPOIS da reconstrução: os painéis "após o passa-baixas" e "após o
+%  equalizador" só fazem sentido com as duas etapas já apresentadas.
+% ============================================================================
+\begin{frame}{Método Topo-Plano}{Visão Geral no Domínio do Tempo}
+\centering
+\begin{tikzpicture}
+\begin{groupplot}[
+  group style={group size=4 by 1, horizontal sep=0.85cm},
+  ftaxis
+]
+
+% (a) Sinal original
+\nextgroupplot[title={(a) Sinal original\\[1pt]{\tiny\ftstrut $x(t)=\cos(2\pi\cdot 2t)$}}]
+  \addplot[ftazul, thick, domain=0:\fttmax, samples=400]
+    {cos(deg(2*pi*\ftfzero*x))};
+
+% (b) Sinal amostrado (topo plano)
+\nextgroupplot[title={(b) Sinal amostrado\\[1pt]{\tiny\ftstrut $x_p(t)$}}]
+  \addplot[gray!55, dashed, domain=0:\fttmax, samples=400]
+    {cos(deg(2*pi*\ftfzero*x))};
+  \addplot[ftlaranja!90!black, semithick, fill=ftlaranja!22, area legend] coordinates {\ftpulsos};
+  \addplot[ycomb, ftazul, thin, mark=*, mark size=1.4pt,
+    mark options={fill=ftazul, draw=white, line width=0.3pt}] coordinates {\ftamostras};
+
+% (c) Após o passa-baixas: abertura + deslocamento
+\nextgroupplot[title={(c) Após o passa-baixas\\[1pt]{\tiny\ftstrut $x_r'(t)$}},
+  clip mode=individual]
+  \draw[black!45, densely dashed, thin] (axis cs:0,1) -- (axis cs:\fttmax,1);
+  \addplot[gray!55, dashed, domain=0:\fttmax, samples=400]
+    {cos(deg(2*pi*\ftfzero*x))};
+  \addplot[ftroxo, thick, domain=0:\fttmax, samples=400]
+    {\ftA*cos(deg(2*pi*\ftfzero*(x-\fttau/2)))};
+  \draw[gray, densely dotted] (axis cs:\ftpico,1) -- (axis cs:\ftpico,1.14);
+  \draw[ftroxo, densely dotted] (axis cs:\ftpicoatr,\ftA) -- (axis cs:\ftpicoatr,1.14);
+  \node[font=\tiny, anchor=south west, inner sep=1pt] at (axis cs:\ftpicoatr,1.12) {atraso $\tau/2$};
+
+% (d) Após o equalizador: amplitude recuperada, atraso mantido
+\nextgroupplot[title={(d) Após o equalizador\\[1pt]{\tiny\ftstrut $x_r(t)$}},
+  clip mode=individual]
+  \draw[black!45, densely dashed, thin] (axis cs:0,1) -- (axis cs:\fttmax,1);
+  \addplot[gray!55, dashed, domain=0:\fttmax, samples=400]
+    {cos(deg(2*pi*\ftfzero*x))};
+  \addplot[ftverde, thick, domain=0:\fttmax, samples=400]
+    {cos(deg(2*pi*\ftfzero*(x-\fttau/2)))};
+  \draw[gray, densely dotted] (axis cs:\ftpico,1) -- (axis cs:\ftpico,1.14);
+  \draw[ftverde, densely dotted] (axis cs:\ftpicoatr,1) -- (axis cs:\ftpicoatr,1.14);
+  \node[font=\tiny, anchor=south west, inner sep=1pt] at (axis cs:\ftpicoatr,1.12) {atraso $\tau/2$};
+
+\end{groupplot}
+\end{tikzpicture}
+
+\vspace{0.2em}
+\mbox{\scriptsize
+\tikz[baseline=-0.6ex]\draw[gray!55, dashed] (0,0) -- (0.45,0); $x(t)$\hspace{0.7em}
+\tikz[baseline=-0.6ex]\draw[ftlaranja!90!black, semithick, fill=ftlaranja!22] (0,-0.08) rectangle (0.5,0.12);\hspace{3pt}pulsos de largura $\tau$\hspace{0.7em}
+\tikz[baseline=-0.6ex]\fill[ftazul] (0,0) circle (1.4pt); \,amostras $x(nT_s)$\hspace{0.7em}
+\tikz[baseline=-0.6ex]\draw[ftroxo, thick] (0,0) -- (0.45,0); após o passa-baixas\hspace{0.7em}
+\tikz[baseline=-0.6ex]\draw[ftverde, thick] (0,0) -- (0.45,0); após o equalizador}
+\end{frame}
+
+\begin{frame}{Método Topo-Plano}{Visão Geral no Domínio da Frequência}
+\centering
+\begin{tikzpicture}
+\begin{groupplot}[
+  group style={group size=4 by 1, horizontal sep=0.85cm},
+  ftfreqaxis
+]
+
+% (a) Espectro do sinal original
+\nextgroupplot[title={(a) Espectro original\\[1pt]{\tiny\ftstrut $X(f)=\frac{1}{2}[\delta(f-2)+\delta(f+2)]$}}]
+  \addplot[ftimpulso, ftazul] coordinates {(-\ftfzero,0.5) (\ftfzero,0.5)};
+
+% (b) Espectro amostrado: réplicas em n f_s ponderadas pelo sinc
+\nextgroupplot[title={(b) Sinal amostrado\\[1pt]{\tiny\ftstrut $X_p(f)$}}]
+  \addplot[black!55, densely dashed, domain=-\ftfmax:\ftfmax, samples=500]
+    {0.5*abs(sin(deg(pi*x*\fttau))/(pi*x*\fttau))};
+  \addplot[ftimpulso, ftlaranja!90!black] coordinates {\ftreplicas};
+  \addplot[ftimpulso, ftazul] coordinates {(-\ftfzero,\ftAmeio) (\ftfzero,\ftAmeio)};
+
+% (c) Após o passa-baixas: só a banda base, atenuada pelo sinc
+\nextgroupplot[title={(c) Após o passa-baixas\\[1pt]{\tiny\ftstrut $X_r'(f)$}}]
+  \draw[black!45, densely dashed, thin] (axis cs:-\ftfmax,0.5) -- (axis cs:\ftfmax,0.5);
+  \draw[ftroxo, densely dashed, fill=ftroxo!8] (axis cs:-\ftfc,0) rectangle (axis cs:\ftfc,0.6);
+  \node[font=\tiny, anchor=south, inner sep=1pt, yshift=4pt, ftroxo] at (axis cs:0,0.6) {$H_{PB}(f)$};
+  \addplot[ftimpulso, ftroxo] coordinates {(-\ftfzero,\ftAmeio) (\ftfzero,\ftAmeio)};
+
+% (d) Após o equalizador: amplitude recuperada, fase linear mantida
+\nextgroupplot[title={(d) Após o equalizador\\[1pt]{\tiny\ftstrut $X_r(f)$}}]
+  \draw[black!45, densely dashed, thin] (axis cs:-\ftfmax,0.5) -- (axis cs:\ftfmax,0.5);
+  \addplot[ftverde, densely dashed, domain=-\ftfc:\ftfc, samples=100, fill=ftverde!8]
+    {0.5/(sin(deg(pi*x*\fttau+1e-6))/(pi*x*\fttau+1e-6))} \closedcycle;
+  \node[font=\tiny, anchor=south, inner sep=1pt, yshift=4pt, ftverde!70!black] at (axis cs:0,0.6) {$H_{eq}(f)\propto\frac{1}{\mathrm{sinc}(f\tau)}$};
+  \addplot[ftimpulso, ftverde] coordinates {(-\ftfzero,0.5) (\ftfzero,0.5)};
+
+\end{groupplot}
+\end{tikzpicture}
+
+\vspace{0.2em}
+\mbox{\scriptsize
+\tikz[baseline=-0.6ex]\draw[black!55, densely dashed] (0,0) -- (0.45,0); envelope $\frac{1}{2}|\mathrm{sinc}(f\tau)|$ \hspace{0.7em}
+\tikz[baseline=-0.6ex]\draw[ftazul, thick] (0,0) -- (0.45,0); banda base\hspace{0.7em}
+\tikz[baseline=-0.6ex]\draw[ftlaranja!90!black, thick] (0,0) -- (0.45,0); réplicas em $nf_s \pm 2$}
+
+\vspace{2pt}
+\mbox{\scriptsize
+\tikz[baseline=-0.6ex]\draw[ftroxo, densely dashed, fill=ftroxo!8] (0,-0.08) rectangle (0.5,0.12);\hspace{3pt}passa-baixas\hspace{0.7em}
+\tikz[baseline=-0.6ex]\draw[ftverde, densely dashed, fill=ftverde!8] (0,-0.08) rectangle (0.5,0.12);\hspace{3pt}equalizador}
 \end{frame}

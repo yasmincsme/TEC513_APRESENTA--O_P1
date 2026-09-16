@@ -27,7 +27,7 @@
 # SyncTeX (inclui o arquivo temporário "main.synctex(busy)")
 /*.synctex.gz
 /*.synctex
-/*.synctex'('busy')'
+/*.synctex(busy)
 
 # Bibliografia
 /*.bbl
