@@ -1,0 +1,314 @@
+\section{Amostragem Natural}
+
+\begin{frame}{Amostragem Natural}{Contexto}
+	
+	A amostragem ideal utiliza um trem de impulsos de Dirac $\delta(t)$, que é uma abstração matemática puramente teórica e fisicamente inexequível, pois exige pulsos com largura infinitesimal ($\tau \to 0$) e amplitude infinita para reter energia finita. 
+	
+	A amostragem natural surge para tornar o processo fisicamente realizável: em vez de impulsos instantâneos, utiliza-se um trem de pulsos retangulares de largura finita $\tau$ e período $T_s$, gerados por chaves eletrônicas reais (como transistores operando em comutação) que se fecham por um intervalo $\tau$ a cada ciclo. Ela aproxima o sistema de um cenário real de chaveamento analógico.
+	
+\end{frame}
+
+% Definição do Pulso p0(t)
+\begin{frame}{Amostragem Natural}{Definição do Pulso Fundamental $p_0(t)$}
+	
+	O processo de amostragem natural utiliza pulsos retangulares de largura finita $\tau$. Definimos inicialmente o pulso unitário $p_0(t)$ centrado na origem:
+	
+	\begin{equation*}
+		p_0(t) = 
+		\begin{cases}
+			1, & -\frac{\tau}{2} \le t \le \frac{\tau}{2} \\[6pt]
+			0, & \text{caso contrário}
+		\end{cases}
+	\end{equation*}
+\end{frame}
+
+\begin{frame}{Amostragem Natural}{Definição do Pulso Fundamental $p_0(t)$}
+	\vfill
+	\centering
+	\begin{tikzpicture}
+		\begin{axis}[
+			pamaxis, 
+			ylabel={$p_0(t)$}, 
+			xmin=-0.6, xmax=0.6, 
+			ymin=-0.2, ymax=1.4,
+			xlabel={$t$}
+			]
+			% Pulso p0(t)
+			\draw[sinalcor, line width=1.2pt, fill=sinalcor!20] 
+			(axis cs:-0.2, 0) -- (axis cs:-0.2, 1) -- (axis cs:0.2, 1) -- (axis cs:0.2, 0) -- cycle;
+			
+			% Marcações do eixo t (-tau/2 e tau/2)
+			\node[below, font=\small] at (axis cs:-0.2, 0) {$-\frac{\tau}{2}$};
+			\node[below, font=\small] at (axis cs:0.2, 0) {$\frac{\tau}{2}$};
+			\node[left, font=\small] at (axis cs:0, 1.1) {$1$};
+		\end{axis}
+	\end{tikzpicture}
+\end{frame}
+
+% Definição do Trem de Pulsos p(t)
+\begin{frame}{Amostragem Natural}{Trem Periódico de Pulsos $p(t)$}
+	
+	O sinal de amostragem $p(t)$ é construído pela replicação periódica do pulso $p_0(t)$ a cada período de amostragem $T_s$:
+	
+	\begin{equation*}
+		p(t) = \sum_{k=-\infty}^{\infty} p_0(t - k T_s)
+	\end{equation*}
+	
+\end{frame}
+
+\begin{frame}{Amostragem Natural}{Trem Periódico de Pulsos $p(t)$}
+	\vfill
+	\centering
+	\begin{tikzpicture}
+		\begin{axis}[pamaxis, ylabel={$p(t)$}, ymin=-0.2, ymax=1.4]
+			\addplot[draw=none] {0};
+			\pgfplotsextra{
+				\foreach \n in {0,...,\Nam}{
+					\pgfmathsetmacro\xa{\n*\Ts - \Tau/2}
+					\pgfmathsetmacro\xb{\n*\Ts + \Tau/2}
+					\draw[sinalcor, line width=1pt, fill=sinalcor!20] 
+					(axis cs:\xa,0) rectangle (axis cs:\xb,1);
+				}
+			}
+			\marcaTs
+		\end{axis}
+	\end{tikzpicture}
+	\par\vspace{0.3em}
+	{\small Trem de pulsos periódico com período $T_s$ e largura de pulso $\tau$.}
+\end{frame}
+
+% Conexão e Série de Fourier de p(t)
+\begin{frame}{Amostragem Natural}{Expansão em Série de Fourier de $p(t)$}
+	Como $p(t)$ é estritamente periódico com período $T_s$ ($f_s = 1/T_s$), podemos representá-lo via Série Exponencial de Fourier:
+	\begin{equation*}
+		p(t) = \sum_{k=-\infty}^{\infty} P[k] e^{j 2\pi k f_s t}
+	\end{equation*}
+	
+	O cálculo dos coeficientes $P[k]$ é realizado no intervalo de um período $[-\frac{T_s}{2}, \frac{T_s}{2}]$:
+	\begin{align*}
+		P[k] &= \frac{1}{T_s} \int_{-T_s/2}^{T_s/2} p_0(t) e^{-j 2\pi k f_s t} \, dt = \frac{1}{T_s} \int_{-\tau/2}^{\tau/2} (1) e^{-j 2\pi k f_s t} \, dt \\[6pt]
+		&= \frac{1}{T_s} \left[ \frac{e^{-j 2\pi k f_s t}}{-j 2\pi k f_s} \right]_{-\tau/2}^{\tau/2} = \frac{1}{T_s} \left( \frac{e^{j \pi k f_s \tau} - e^{-j \pi k f_s \tau}}{j 2\pi k f_s} \right)
+	\end{align*}
+\end{frame}
+
+\begin{frame}{Amostragem Natural}{Coeficientes $P[k]$ da Série de Fourier}
+	Aplicando a identidade de Euler $\sin(\theta) = \frac{e^{j\theta} - e^{-j\theta}}{2j}$:
+	\begin{equation*}
+		P[k] = \frac{\sin(\pi k f_s \tau)}{\pi k T_s f_s}
+	\end{equation*}
+	
+	Como $T_s f_s = 1$, multiplicamos e dividimos por $\tau$ para obter a função $\text{sinc}$:
+	\begin{equation*}
+		P[k] = \frac{\tau}{T_s} \cdot \frac{\sin(\pi k f_s \tau)}{\pi k f_s \tau} \implies P[k] = \frac{\tau}{T_s} \text{sinc}(k f_s \tau)
+	\end{equation*}
+	
+	\begin{block}{Sinal de Amostragem no Tempo}
+		\begin{equation*}
+			p(t) = \sum_{k=-\infty}^{\infty} \left[ \frac{\tau}{T_s} \text{sinc}(k f_s \tau) \right] e^{j 2\pi k f_s t}
+		\end{equation*}
+	\end{block}
+\end{frame}
+
+% Construção Analítica de s(t) no Tempo
+\begin{frame}{Amostragem Natural}{Modelagem Analítica no Tempo}
+	O sinal amostrado $s(t)$ é gerado pelo produto direto entre $x(t)$ e $p(t)$:
+	
+	\begin{equation*}
+		s(t) = x(t) \cdot p(t)
+	\end{equation*}
+	
+	Substituindo a expansão em Série de Fourier de $p(t)$:
+	
+	\begin{equation*}
+		s(t) = x(t) \cdot \sum_{k=-\infty}^{\infty} P[k] e^{j 2\pi k f_s t}
+	\end{equation*}
+	
+	
+\end{frame}
+
+\begin{frame}{Amostragem Natural}{Modelagem Analítica no Tempo}
+	Pela propriedade distributiva, inserimos $x(t)$ no somatório:
+	
+	\begin{equation*}
+		s(t) = \sum_{k=-\infty}^{\infty} P[k] x(t) e^{j 2\pi k f_s t}
+	\end{equation*}
+	
+	
+	Substituindo a expressão analítica de $P[k]$:
+	
+	\begin{equation*}
+		s(t) = \sum_{k=-\infty}^{\infty} \left[ \frac{\tau}{T_s} \text{sinc}(k f_s \tau) \right] x(t) e^{j 2\pi k f_s t}
+	\end{equation*}
+\end{frame}
+
+% Amostragem Natural: sobreposição x(t) + p(t), e produto s(t) = x(t)·p(t)
+\begin{frame}{Amostragem Natural}{Sobreposição e Produto}
+	\centering
+	\begin{minipage}[c][0.72\textheight][c]{0.95\textwidth}
+		\centering
+		
+		% Parâmetros locais (Ts = 0.2 s, Tau = 0.05 s, 5 pulsos)
+		\def\Ts{0.2}
+		\def\Tau{0.05}
+		\def\Nam{5}
+		
+		\only<1>{
+			\begin{tikzpicture}
+				\begin{axis}[
+					pamaxis,
+					ylabel={$x(t)$ e $p(t)$},
+					ylabel style={at={(axis cs:0,1.45)}, anchor=south}, % Centraliza sobre o eixo x=0
+					trig format=rad,
+					ymin=-0.2, ymax=1.45
+					]
+					% Trem de pulsos p(t)
+					\pgfplotsextra{%
+						\foreach \n in {0,...,\Nam}{%
+							\pgfmathsetmacro\xa{\n*\Ts - \Tau/2}%
+							\pgfmathsetmacro\xb{\n*\Ts + \Tau/2}%
+							\draw[gray!60, line width=.7pt, fill=gray!15]
+							(axis cs:\xa,0) rectangle (axis cs:\xb,1);
+						}%
+					}
+					% x(t) = cos(2*pi*2*t)
+					\addplot[sinalcor, line width=1.4pt, smooth, domain=0:1, samples=300]
+					{cos(4*pi*x)};
+				\end{axis}
+			\end{tikzpicture}\par
+			\small Sinal analógico $x(t)=\cos(2\pi\cdot 2t)$ sobreposto ao trem de pulsos $p(t)$ (largura $\tau$, período $T_s$).}
+		
+		% produto s(t)
+		\only<2>{%
+			\begin{tikzpicture}
+				\begin{axis}[
+					pamaxis,
+					ylabel={$s(t) = x(t) \cdot p(t)$},
+					ylabel style={at={(axis cs:0,1.45)}, anchor=south}, % Centraliza sobre o eixo x=0
+					trig format=rad,
+					ymin=-0.2, ymax=1.45
+					]
+					% Envoltória x(t) como referência tracejada
+					\addplot[gray!60, dashed, line width=.7pt, smooth, domain=0:1, samples=300]
+					{cos(4*pi*x)};
+					% Pulsos de amostragem natural: topo SEGUE x(t)
+					\pgfplotsextra{%
+						\foreach \n in {0,...,\Nam}{%
+							\pgfmathsetmacro\xa{\n*\Ts - \Tau/2}%
+							\pgfmathsetmacro\xb{\n*\Ts + \Tau/2}%
+							\draw[sinalcor, line width=.9pt, fill=sinalcor!25]
+							(axis cs:\xa,0) --
+							(axis cs:\xa,{cos(4*pi*\xa)}) --
+							plot[domain=\xa:\xb, samples=25, smooth]
+							(axis cs:\x,{cos(4*pi*\x)}) --
+							(axis cs:\xb,{cos(4*pi*\xb)}) --
+							(axis cs:\xb,0) -- cycle;
+						}%
+					}
+				\end{axis}
+			\end{tikzpicture}\par
+			\small Sinal amostrado naturalmente $s(t)=x(t)\cdot p(t)$. O topo de cada pulso \textbf{acompanha a forma de $x(t)$} — característica da amostragem natural.}
+		
+		% ---------------------------------------------------- (3) destaque: onde p(t)=0 vs p(t)=1
+		\only<3>{%
+			\begin{tikzpicture}
+				\begin{axis}[
+					pamaxis,
+					ylabel={$s(t)$},
+					ylabel style={at={(axis cs:0,1.45)}, anchor=south}, % Centraliza sobre o eixo x=0
+					trig format=rad,
+					ymin=-0.2, ymax=1.45
+					]
+					% x(t) como referência tracejada
+					\addplot[gray!60, dashed, line width=.7pt, smooth, domain=0:1, samples=300]
+					{cos(4*pi*x)};
+					% Regiões onde p(t) = 0  ->  s(t) = 0 (faixas cinzas claras)
+					\pgfplotsextra{%
+						\foreach \n in {0,...,\Nam}{%
+							\pgfmathsetmacro\xa{\n*\Ts + \Tau/2}%
+							\pgfmathsetmacro\xb{(\n+1)*\Ts - \Tau/2}%
+							\ifnum\n<\Nam
+							\draw[black!10, fill=black!5]
+							(axis cs:\xa,-0.15) rectangle (axis cs:\xb,1.35);
+							\fi
+						}%
+					}
+					% Pulsos de amostragem natural
+					\pgfplotsextra{%
+						\foreach \n in {0,...,\Nam}{%
+							\pgfmathsetmacro\xa{\n*\Ts - \Tau/2}%
+							\pgfmathsetmacro\xb{\n*\Ts + \Tau/2}%
+							\draw[sinalcor, line width=.9pt, fill=sinalcor!25]
+							(axis cs:\xa,0) --
+							(axis cs:\xa,{cos(4*pi*\xa)}) --
+							plot[domain=\xa:\xb, samples=25, smooth]
+							(axis cs:\x,{cos(4*pi*\x)}) --
+							(axis cs:\xb,{cos(4*pi*\xb)}) --
+							(axis cs:\xb,0) -- cycle;
+						}%
+					}
+					% Rótulos das duas regiões
+					\node[font=\tiny, anchor=north] at (axis cs:0.30,-0.02)
+					{$p(t)=0 \Rightarrow s(t)=0$};
+					\node[font=\tiny, anchor=north, text=sinalcor] at (axis cs:0.05,-0.02)
+					{$p(t)=1$};
+				\end{axis}
+			\end{tikzpicture}\par
+			\small Onde $p(t)=0$, o produto é nulo (faixas cinzas). Onde $p(t)=1$ (dentro de cada pulso), o produto reproduz $x(t)$ — o topo \textbf{segue} o cosseno.}
+		
+	\end{minipage}
+\end{frame}
+
+% Domínio da Frequência: Convolução e Espectro Final
+\begin{frame}{Amostragem Natural}{Análise no Domínio da Frequência}
+	
+	A multiplicação no tempo equivale à convolução no domínio da frequência:
+	
+	\begin{equation*}
+		S(f) = \mathcal{F}\{s(t)\} = X(f) * P(f)
+	\end{equation*}
+	
+	A Transformada de Fourier do trem de pulsos $p(t)$ é:
+	
+	\begin{equation*}
+		P(f) = \sum_{k=-\infty}^{\infty} P[k] \delta(f - k f_s)
+	\end{equation*}
+	
+\end{frame}
+
+\begin{frame}{Amostragem Natural}{Análise no Domínio da Frequência}
+	Calculando a convolução $X(f) * P(f)$:
+	\begin{align*}
+		S(f) &= X(f) * \sum_{k=-\infty}^{\infty} P[k] \delta(f - k f_s) \\[4pt]
+		&= \sum_{k=-\infty}^{\infty} P[k] \left[ X(f) * \delta(f - k f_s) \right] \\[4pt]
+		&= \sum_{k=-\infty}^{\infty} P[k] X(f - k f_s)
+	\end{align*}
+\end{frame}
+
+% Frame 2: Espectro Final do Sinal Amostrado
+\begin{frame}{Amostragem Natural}{Espectro Final do Sinal Amostrado}
+	
+	Substituindo o coeficiente $P[k] = \frac{\tau}{T_s} \text{sinc}(k f_s \tau)$, temos a expressão espectral final:
+	
+	\begin{equation*}
+		S(f) = \sum_{k=-\infty}^{\infty} \frac{\tau}{T_s} \text{sinc}(k f_s \tau) X(f - k f_s)
+	\end{equation*}
+	
+	\vfill
+	\centering
+	\begin{tikzpicture}
+		\begin{axis}[
+			pamaxis, 
+			ylabel={$S(f)$}, 
+			xlabel={$f$},
+			xmin=-15, xmax=15, 
+			ymin=-0.1, ymax=0.6,
+			axis lines=middle,
+			trig format=rad
+			]
+			% Envelope Sinc
+			% Réplicas Espectrais centradas em k*fs
+		\end{axis}
+	\end{tikzpicture}
+	\par\vspace{0.3em}
+	{\small Réplicas de $X(f)$ repetidas a cada $f_s$, atenuadas pelo envelope $\frac{\tau}{T_s}\text{sinc}(k f_s \tau)$.}
+\end{frame}

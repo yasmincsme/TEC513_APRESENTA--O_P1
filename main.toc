@@ -1,4 +1,2 @@
-\beamer@sectionintoc {1}{Introdução}{2}{0}{1}
-\beamer@sectionintoc {2}{Fundamentação Teórica}{5}{0}{2}
-\beamer@sectionintoc {3}{Desenvolvimento analítico}{35}{0}{3}
-\beamer@sectionintoc {4}{Summary}{41}{0}{4}
+\beamer@sectionintoc {1}{Amostragem Natural}{2}{0}{1}
+\beamer@sectionintoc {2}{Summary}{20}{0}{2}
