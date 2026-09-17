@@ -1,0 +1,866 @@
+\section{Amostragem Natural}
+
+\begin{frame}{Amostragem Natural}{Contexto}
+	
+	A amostragem ideal utiliza um trem de impulsos de Dirac $\delta(t)$, que é uma abstração matemática puramente teórica e fisicamente inexequível, pois exige pulsos com largura infinitesimal ($\tau \to 0$) e amplitude infinita para reter energia finita. 
+	
+	A amostragem natural surge para tornar o processo fisicamente realizável: em vez de impulsos instantâneos, utiliza-se um trem de pulsos retangulares de largura finita $\tau$ e período $T_s$, gerados por chaves eletrônicas reais (como transistores operando em comutação) que se fecham por um intervalo $\tau$ a cada ciclo. Ela aproxima o sistema de um cenário real de chaveamento analógico \cite{lathi2012sistemas}.
+	
+\end{frame}
+
+% Definição do Pulso p0(t)
+\begin{frame}{Amostragem Natural}{Definição do Pulso Fundamental $p_0(t)$}
+	
+	O processo de amostragem natural utiliza pulsos retangulares de largura finita $\tau$. Definimos inicialmente o pulso unitário $p_0(t)$ centrado na origem:
+	
+	\begin{equation}
+		p_0(t) = 
+		\begin{cases}
+			1, & -\frac{\tau}{2} \le t \le \frac{\tau}{2} \\[6pt]
+			0, & \text{caso contrário}
+		\end{cases}
+		\label{eq: definicao_pulso_unitario_natural}
+	\end{equation}
+	
+	\begin{figure}
+		\vfill
+		\centering
+		\begin{tikzpicture}
+			\begin{axis}[
+				pamaxis,
+				width=\textwidth,
+				height=3.5cm,
+				ylabel={$p_0(t)$}, 
+				ylabel style={at={(axis cs:0,1.45)}, anchor=south},
+				xmin=-0.3, xmax=0.3, 
+				ymin=-0.2, ymax=1.4,
+				xlabel={$t$},
+				xlabel style={at={(axis cs:0.3,0)}, anchor=west}
+				]
+				% Pulso p0(t)
+				\draw[sinalcor, line width=1.2pt, fill=sinalcor!20] 
+				(axis cs:-0.1, 0) -- (axis cs:-0.1, 1) -- (axis cs:0.1, 1) -- (axis cs:0.1, 0) -- cycle;
+				
+				% Marcações do eixo t (-tau/2 e tau/2)
+				\node[below, font=\small] at (axis cs:-0.1, 0) {$-\frac{\tau}{2}$};
+				\node[below, font=\small] at (axis cs:0.1, 0) {$\frac{\tau}{2}$};
+				\node[left, font=\small] at (axis cs:0, 1.2) {$1$};
+			\end{axis}
+		\end{tikzpicture}
+		\vspace{-1em}
+		\caption{Pulso unitário de largura $\tau$.}
+		\label{fig: pulso_unitario_natural}
+	\end{figure}
+	
+\end{frame}
+
+% Definição do Trem de Pulsos p(t)
+\begin{frame}{Amostragem Natural}{Trem Periódico de Pulsos $p(t)$}
+	
+	O sinal de amostragem $p(t)$ é construído pela replicação periódica do pulso $p_0(t)$ a cada período de amostragem $T_s$:
+	
+	\begin{equation}
+		p(t) = \sum_{k=-\infty}^{\infty} p_0(t - k T_s)
+		\label{eq: definicao_trem_de_pulsos_unitario_natural}
+	\end{equation}
+	
+	\begin{figure}
+		\vfill
+		\centering
+		\begin{tikzpicture}
+			\begin{axis}[
+				pamaxis, 
+				width=1.05\textwidth,
+				height=3.5cm,
+				ylabel={$p(t)$}, 
+				ylabel style={at={(axis cs:0,1.45)}, anchor=south},
+				xmin=-0.3, xmax=0.3, 
+				ymin=-0.2, ymax=1.4,
+				xlabel={$t$},
+				xlabel style={at={(axis cs:0.3,0)}, anchor=west}
+				]
+				\addplot[draw=none] {0};
+				\pgfplotsextra{
+					\foreach \n in {-2,...,2}{
+						\pgfmathsetmacro\xa{\n*\Ts - \Tau/2}
+						\pgfmathsetmacro\xb{\n*\Ts + \Tau/2}
+						\draw[sinalcor, line width=1pt, fill=sinalcor!20] 
+						(axis cs:\xa,0) rectangle (axis cs:\xb,1);
+					}
+				}
+				\node[below, font=\small] at (axis cs:-0.025, 0) {$-\frac{\tau}{2}$};
+				\node[below, font=\small] at (axis cs:0.022, 0) {$\frac{\tau}{2}$};
+				\node[left, font=\small] at (axis cs:0, 1.1) {$1$};
+			\end{axis}
+		\end{tikzpicture}
+		\vspace{-2em}
+		\caption{Trem de pulsos periódico com período $T_s$ e largura de pulso $\tau$.}
+		\label{fig: trem_de_pulsos_unitario_natural}
+	\end{figure}
+\end{frame}
+
+
+
+% Conexão e Série de Fourier de p(t)
+\begin{frame}{Amostragem Natural}{Expansão em Série de Fourier de $p(t)$}
+	
+	Como $p(t)$ é estritamente periódico com período $T_s$ ($f_s = 1/T_s$), podemos representá-lo via Série Exponencial de Fourier:
+	
+	\begin{equation}
+		p(t) = \sum_{k=-\infty}^{\infty} P[k] e^{j 2\pi k f_s t}
+		\label{eq: representacao_serie_fourier}
+	\end{equation}
+	
+	O cálculo dos coeficientes $P[k]$ é realizado no intervalo de um período $[-\frac{T_s}{2}, \frac{T_s}{2}]$:
+	
+	\begin{equation}
+		P[k] = \frac{1}{T_s} \int_{-T_s/2}^{T_s/2} p(t) e^{-j 2\pi k f_s t} \, dt
+		\label{eq: representacao_coeficiente_fourier_natural} 
+	\end{equation}
+	
+\end{frame}
+	
+\begin{frame}{Amostragem Natural}{Expansão em Série de Fourier de $p(t)$}
+	
+	Dentro deste intervalo $[-T_s/2, T_s/2]$, o sinal periódico $p(t)$ é igual ao pulso fundamental $p_0(t)$ (com $\tau < T_s$). Tomando o sinal $p_0(t)$ no intervalo $[-\tau/2, \tau/2]$:
+	
+	\begin{align*}
+		P[k] &= \frac{1}{T_s} \int_{-T_s/2}^{T_s/2} p_0(t) e^{-j 2\pi k f_s t} \, dt = \frac{1}{T_s} \int_{-\tau/2}^{\tau/2} (1) e^{-j 2\pi k f_s t} \, dt \\[6pt]
+		&= \frac{1}{T_s} \left[ \frac{e^{-j 2\pi k f_s t}}{-j 2\pi k f_s} \right]_{-\tau/2}^{\tau/2} = \frac{1}{T_s} \left( \frac{e^{j \pi k f_s \tau} - e^{-j \pi k f_s \tau}}{j 2\pi k f_s} \right)
+	\end{align*}
+	
+	Aplicando a identidade de Euler $\sin(\theta) = \frac{e^{j\theta} - e^{-j\theta}}{2j}$:
+	\begin{equation*}
+		P[k] = \frac{\sin(\pi k f_s \tau)}{\pi k T_s f_s}
+	\end{equation*}
+	
+\end{frame}
+
+\begin{frame}{Amostragem Natural}{Coeficientes $P[k]$ da Série de Fourier}
+		
+	Como $T_s f_s = 1$, multiplicamos e dividimos por $\tau$ para obter a função $\text{sinc}$:
+	\begin{equation}
+		P[k] = \frac{\tau}{T_s} \cdot \frac{\sin(\pi k f_s \tau)}{\pi k f_s \tau} \implies P[k] = \frac{\tau}{T_s} \text{sinc}(k f_s \tau)
+		\label{eq: definicao_pk_natural}
+	\end{equation}
+	
+	\begin{block}{Sinal de Amostragem no Tempo}
+		\begin{equation}
+			p(t) = \sum_{k=-\infty}^{\infty} \left[ \frac{\tau}{T_s} \text{sinc}(k f_s \tau) \right] e^{j 2\pi k f_s t}
+			\label{eq: sinal_amostragem_tempo_natural}
+		\end{equation}
+	\end{block}
+\end{frame}
+
+% Construção Analítica de s(t) no Tempo
+\begin{frame}{Amostragem Natural}{Modelagem Analítica no Tempo}
+	O sinal amostrado $s(t)$ é gerado pelo produto direto entre $x(t)$ e $p(t)$:
+	
+	\begin{equation}
+		s(t) = x(t) \cdot p(t)
+		\label{eq: definicao_amostragem_natural}
+	\end{equation}
+	
+	Substituindo a expansão em Série de Fourier de $p(t)$:
+	
+	\begin{equation*}
+		s(t) = x(t) \cdot \sum_{k=-\infty}^{\infty} P[k] e^{j 2\pi k f_s t}
+	\end{equation*}
+	
+	
+\end{frame}
+
+\begin{frame}{Amostragem Natural}{Modelagem Analítica no Tempo}
+	Pela propriedade distributiva, inserimos $x(t)$ no somatório:
+	
+	\begin{equation*}
+		s(t) = \sum_{k=-\infty}^{\infty} P[k] x(t) e^{j 2\pi k f_s t}
+	\end{equation*}
+	
+	
+	Substituindo a expressão analítica de $P[k]$ (\ref{eq: definicao_pk_natural}):
+	
+	\begin{equation*}
+		s(t) = \sum_{k=-\infty}^{\infty} \left[ \frac{\tau}{T_s} \text{sinc}(k f_s \tau) \right] x(t) e^{j 2\pi k f_s t}
+	\end{equation*}
+\end{frame}
+
+% Amostragem Natural: sobreposição x(t) + p(t), e produto s(t) = x(t)·p(t)
+\begin{frame}{Amostragem Natural}{Sobreposição e Produto}
+	\centering
+	
+	% Parâmetros
+	\def\Ts{0.2}
+	\def\Tau{0.05}
+	\def\Nam{5}
+	
+	\begin{minipage}[c]{0.48\textwidth}
+		
+		\begin{figure}
+			\centering
+			\begin{tikzpicture}
+				\begin{axis}[
+					pamaxis,
+					width=\textwidth,
+					height=4.5cm,
+					ylabel={$x(t)$ e $p(t)$},
+					ylabel style={at={(axis cs:0,1.45)}, anchor=south},
+					xlabel={$t$},
+					xlabel style={at={(axis cs:1.1,0)}, anchor=south},
+					trig format=rad,
+					ymin=-0.2, ymax=1.45,
+					xmin=-0.1, xmax=1.1
+					]
+					
+					% Trem de pulsos p(t)
+					\pgfplotsextra{%
+						\foreach \n in {0,...,\Nam}{%
+							\pgfmathsetmacro\xa{\n*\Ts - \Tau/2}%
+							\pgfmathsetmacro\xb{\n*\Ts + \Tau/2}%
+							\draw[
+							gray!60,
+							line width=.7pt,
+							fill=gray!15
+							]
+							(axis cs:\xa,0)
+							rectangle
+							(axis cs:\xb,1);
+						}%
+					}
+					
+					% x(t) = cos(2*pi*2*t)
+					\addplot[
+					sinalcor,
+					line width=1.4pt,
+					smooth,
+					domain=0:1,
+					samples=300
+					]
+					{cos(4*pi*x)};
+					
+				\end{axis}
+			\end{tikzpicture}
+			\caption{$x(t)$ (representada por uma cossenoide) sobreposto ao
+				trem de pulsos $p(t)$.}
+			\label{fig: sobreposicao_xt_pt_natural}
+		\end{figure}
+		
+	\end{minipage}
+	\hfill
+	\begin{minipage}[c]{0.48\textwidth}
+		\begin{figure}
+			\centering
+			\begin{tikzpicture}
+				\begin{axis}[
+					pamaxis,
+					width=\textwidth,
+					height=4.5cm,
+					ylabel={$s(t)=x(t)p(t)$},
+					ylabel style={at={(axis cs:0,1.45)}, anchor=south},
+					xlabel={$t$},
+					xlabel style={at={(axis cs:1.1,0)}, anchor=south},
+					trig format=rad,
+					ymin=-0.2, ymax=1.45,
+					xmin=-0.1, xmax=1.1
+					]
+					
+					% Envoltória x(t) como referência
+					\addplot[
+					gray!60,
+					dashed,
+					line width=.7pt,
+					smooth,
+					domain=0:1,
+					samples=300
+					]
+					{cos(4*pi*x)};
+					
+					% Pulsos de amostragem natural
+					\pgfplotsextra{%
+						\foreach \n in {0,...,\Nam}{%
+							\pgfmathsetmacro\xa{\n*\Ts - \Tau/2}%
+							\pgfmathsetmacro\xb{\n*\Ts + \Tau/2}%
+							
+							\draw[
+							sinalcor,
+							line width=.9pt,
+							fill=sinalcor!25
+							]
+							(axis cs:\xa,0) --
+							(axis cs:\xa,{cos(4*pi*\xa)}) --
+							plot[
+							domain=\xa:\xb,
+							samples=25,
+							smooth
+							]
+							(axis cs:\x,{cos(4*pi*\x)}) --
+							(axis cs:\xb,{cos(4*pi*\xb)}) --
+							(axis cs:\xb,0) --
+							cycle;
+						}%
+					}
+					
+				\end{axis}
+			\end{tikzpicture}
+			\caption{$s(t)=x(t)\cdot p(t)$. O topo de cada pulso
+				\textbf{acompanha $x(t)$}.}
+			\label{fig: produto_xt_pt_natural}
+		\end{figure}
+		
+	\end{minipage}
+	
+\end{frame}
+
+% analise no dominio da frequencia
+\begin{frame}{Amostragem Natural}{Análise no Domínio da Frequência}
+	
+	A multiplicação no tempo equivale à convolução no domínio da frequência  \cite{oppenheim1997signals}:
+	\begin{equation}
+		S(f) = \mathcal{F}\{x(t) \cdot p(t)\} = X(f) * P(f)
+		\label{eq: definicao_convolucao_frequencia_natural}
+	\end{equation}
+	
+	Sabemos que a expansão em Série de Fourier de $p(t)$ é: 
+	\begin{equation*}
+		p(t) = \sum_{k=-\infty}^{\infty} P[k] e^{j k \omega_s t}
+	\end{equation*}
+	
+	Na frequência angular $\omega$ (rad/s), a Transformada de Fourier de um sinal periódico gera impulsos multiplicados por $2\pi$  \cite{oppenheim1997signals}:
+	\begin{equation*}
+		P(j\omega) = 2\pi \sum_{k=-\infty}^{\infty} P[k] \delta(\omega - k\omega_s)
+	\end{equation*}
+	
+\end{frame}
+
+\begin{frame}{Amostragem Natural}{Análise no Domínio da Frequência}
+	
+	Para converter a transformada para Hertz ($f$), utilizamos as relações $\omega = 2\pi f$ e $\omega_s = 2\pi f_s$:
+	\begin{equation*}
+		P(f) = 2\pi \sum_{k=-\infty}^{\infty} P[k] \delta(2\pi f - 2\pi k f_s)
+	\end{equation*}
+	
+	Fatorando a constante $2\pi$ dentro da função impulso:
+	\begin{equation*}
+		P(f) = 2\pi \sum_{k=-\infty}^{\infty} P[k] \delta\big(2\pi(f - k f_s)\big)
+	\end{equation*}
+	
+	Aplicando a propriedade de escalonamento do impulso de Dirac, $\delta(ax) = \frac{1}{|a|}\delta(x)$  \cite{oppenheim1997signals}:
+	\begin{equation*}
+		P(f) = 2\pi \sum_{k=-\infty}^{\infty} P[k] \left[ \frac{1}{2\pi} \delta(f - k f_s) \right]
+	\end{equation*}
+	
+\end{frame}
+
+\begin{frame}{Amostragem Natural}{Análise no Domínio da Frequência}
+	Os fatores $2\pi$ se cancelam, resultando na equação final do espectro de amostragem:
+	\begin{equation}
+		P(f) = \sum_{k=-\infty}^{\infty} P[k] \delta(f - k f_s)
+		\label{eq: pf_natural}
+	\end{equation}
+	
+	Calculando a convolução $X(f) * P(f)$:
+	\begin{align*}
+		S(f) &= X(f) * \sum_{k=-\infty}^{\infty} P[k] \delta(f - k f_s) \\[4pt]
+		&= \sum_{k=-\infty}^{\infty} P[k] \left[ X(f) * \delta(f - k f_s) \right] \\[4pt]
+		&= \sum_{k=-\infty}^{\infty} P[k] X(f - k f_s)
+	\end{align*}
+\end{frame}
+
+% Espectro Final do Sinal Amostrado
+\begin{frame}{Amostragem Natural}{Espectro Final do Sinal Amostrado}
+	
+	Substituindo o coeficiente
+	$P[k] = \frac{\tau}{T_s}\text{sinc}(k f_s\tau)$,
+	temos:
+	
+	\begin{equation}
+		S(f) =
+		\sum_{k=-\infty}^{\infty}
+		\frac{\tau}{T_s}
+		\text{sinc}(k f_s\tau)
+		X(f-kf_s)
+		\label{eq: sf_natural}
+	\end{equation}
+	
+	\vspace{-0.4em}
+	
+	\centering
+
+	% PARÂMETROS USADOS APENAS PARA CONSTRUIR A SIMULAÇÃO
+	
+	\def\fs{5}
+	\def\Ts{0.2}
+	\def\Tau{0.05}
+	\def\fzero{1}
+	
+	\begin{figure}
+		\begin{tikzpicture}
+			\begin{axis}[
+				pamaxis,
+				width=0.85\textwidth,
+				height=5.0cm,
+				xlabel={$f$},
+				ylabel={$S(f)$},
+				xmin=-13, xmax=13,
+				ymin=-0.13, ymax=0.32,
+				axis lines=middle,
+				xtick={-10,-5,0,5,10},
+				xticklabels={
+					$-2f_s$,
+					$-f_s$,
+					$0$,
+					$f_s$,
+					$2f_s$
+				},
+				ytick={0},
+				yticklabels={$0$},
+				grid=none,
+				clip=false
+				]
+				
+				% =========================================================
+				% ENVELOPE DOS COEFICIENTES P[k]
+				% =========================================================
+				
+				\addplot[
+				sinalcor,
+				dashed,
+				thin,
+				domain=-2.8:2.8,
+				samples=300
+				]
+				{
+					0.25 *
+					abs(
+					sin(deg(pi*x*0.28))
+					/
+					(pi*x*0.25)
+					)
+				};
+				
+				
+				% =========================================================
+				% IMPULSOS ESPECTRAIS
+				% x(t) = cos(2*pi*f0*t)
+				% =========================================================
+				
+				% k = 0
+				
+				\draw[sinalcor, very thick]
+				(axis cs:-1,0) -- (axis cs:-1,0.25);
+				
+				\draw[sinalcor, very thick]
+				(axis cs:1,0) -- (axis cs:1,0.25);
+				
+				
+				% k = +1
+				
+				\draw[sinalcor, very thick]
+				(axis cs:4,0) -- (axis cs:4,0.225);
+				
+				\draw[sinalcor, very thick]
+				(axis cs:6,0) -- (axis cs:6,0.225);
+				
+				
+				% k = -1
+				
+				\draw[sinalcor, very thick]
+				(axis cs:-6,0) -- (axis cs:-6,0.225);
+				
+				\draw[sinalcor, very thick]
+				(axis cs:-4,0) -- (axis cs:-4,0.225);
+				
+				
+				% k = +2
+				
+				\draw[sinalcor, very thick]
+				(axis cs:9,0) -- (axis cs:9,0.159);
+				
+				\draw[sinalcor, very thick]
+				(axis cs:11,0) -- (axis cs:11,0.159);
+				
+				
+				% k = -2
+				
+				\draw[sinalcor, very thick]
+				(axis cs:-11,0) -- (axis cs:-11,0.159);
+				
+				\draw[sinalcor, very thick]
+				(axis cs:-9,0) -- (axis cs:-9,0.159);
+				
+				% =========================================================
+				% PONTOS NO TOPO DOS IMPULSOS
+				% =========================================================
+				
+				\addplot[
+				only marks,
+				mark=*,
+				mark size=1.5pt
+				]
+				coordinates {
+					(-1,0.25)
+					(1,0.25)
+					(-6,0.225)
+					(-4,0.225)
+					(4,0.225)
+					(6,0.225)
+					(-11,0.159)
+					(-9,0.159)
+					(9,0.159)
+					(11,0.159)
+				};
+				
+				
+				
+				% =========================================================
+				% INDICAÇÃO DA FREQUÊNCIA DO COSSENO
+				% =========================================================
+				
+				\draw[
+				<->,
+				thick
+				]
+				(axis cs:0,-0.05) --
+				node[below=1pt] {$f_0$}
+				(axis cs:1,-0.05);
+				
+				
+			\end{axis}
+		\end{tikzpicture}
+		\caption{Para $x(t)=\cos(2\pi f_0t)$, cada réplica de $X(f)$
+			possui dois impulsos, deslocados de $k f_s$ e ponderados por $P[k]$.}
+		\label{fig: espectro_frequencia_amostrado_natural}
+	\end{figure}
+	
+	\vspace{-0.1em}
+
+	
+\end{frame}
+
+% Filtro de Reconstrução
+\begin{frame}{Reconstrução da Amostragem Natural}
+	{Filtro de Reconstrução}
+	
+	Para recuperar o sinal original, utilizamos um filtro
+	passa-baixas com frequência de corte $f_c$. O ganho $\dfrac{T_s}{\tau}$ compensa a atenuação $\displaystyle P[0]=\dfrac{\tau}{T_s}$ da réplica central:
+	
+	\begin{equation}
+		H_r(f)=
+		\begin{cases}
+			\dfrac{T_s}{\tau}, & |f|\leq f_c \\[6pt]
+			0, & |f|>f_c
+		\end{cases}
+		\label{eq: definicao_hr_natural}
+	\end{equation}
+	
+	\vspace{-0.3em}
+	
+	\centering
+	
+	% Parâmetros usados apenas para construir a simulação
+	\def\fs{5}
+	\def\Ts{0.2}
+	\def\Tau{0.05}
+	\def\fc{2.5}
+	\def\fzero{1}
+	
+	\begin{figure}
+		\begin{tikzpicture}
+			\begin{axis}[
+				pamaxis,
+				width=0.85\textwidth,
+				height=4.0cm,
+				xlabel={$f$},
+				ylabel={$H_r(f)$},
+				ylabel style={at={(axis cs:0,5.8)}, anchor=south}, % Sobe o rótulo Hr(f) para cima da seta
+				xmin=-6.5, xmax=6.5,
+				ymin=-1.2, ymax=5.8, % Aumenta o ymax para a seta subir mais
+				axis lines=middle,
+				xtick={-5,0,5},
+				xticklabels={
+					$-f_s$,
+					$0$,
+					$f_s$
+				},
+				ytick={0},
+				yticklabels={$0$},
+				grid=none,
+				clip=false
+				]
+				
+				% ---------------------------------------------------------
+				% RESPOSTA DO FILTRO
+				% ---------------------------------------------------------
+				
+				\draw[
+				sinalcor,
+				very thick,
+				fill=sinalcor!15
+				]
+				(axis cs:-2.5,0)
+				-- (axis cs:-2.5,4)
+				-- (axis cs:2.5,4)
+				-- (axis cs:2.5,0)
+				-- cycle;
+				
+				% ---------------------------------------------------------
+				% INDICAÇÃO DE -fc E fc
+				% ---------------------------------------------------------
+				
+				\draw[dashed,gray!70]
+				(axis cs:-2.5,0)
+				-- (axis cs:-2.5,4);
+				
+				\draw[dashed,gray!70]
+				(axis cs:2.5,0)
+				-- (axis cs:2.5,4);
+				
+				\node[
+				below=3pt
+				]
+				at (axis cs:-2.5,0)
+				{$-f_c$};
+				
+				\node[
+				below=3pt
+				]
+				at (axis cs:2.5,0)
+				{$f_c$};
+				
+				% ---------------------------------------------------------
+				% GANHO DO FILTRO
+				% ---------------------------------------------------------
+				
+				% Posicionado ao lado do eixo y, em vez de em cima
+				\node[
+				left=3pt
+				]
+				at (axis cs:0,5)
+				{\scriptsize $\displaystyle \frac{T_s}{\tau}$};
+				
+				% ---------------------------------------------------------
+				% CONDIÇÕES
+				% ---------------------------------------------------------
+				
+				\node[
+				anchor=west,
+				align=left
+				]
+				at (axis cs:3.0,3.1)
+				{\scriptsize
+					$\displaystyle 0<\tau<T_s$\\[3pt]
+					$\displaystyle f_0<f_c<f_s-f_0$
+				};
+				
+			\end{axis}
+		\end{tikzpicture}
+		\caption{Filtro de reconstrução definido como pulso retangular.}
+		\label{fig: filtro_reconstrucao_natural}
+	\end{figure}
+	
+	\vspace{-0.4em}
+	
+\end{frame}
+
+% =========================================================
+% Sobreposição de S(f) e Hr(f)
+% =========================================================
+\begin{frame}{Reconstrução da Amostragem Natural}{Sobreposição do Espectro e do Filtro}
+	
+	A filtragem consiste em aplicar o filtro $H_r(f)$ sobre o espectro amostrado $S(f)$. O filtro isola a réplica central (banda base) e rejeita todas as réplicas de alta frequência centradas em múltiplos de $f_s$.
+	
+	\vspace{-0.2em}
+	
+	\begin{figure}
+		\centering
+		\begin{tikzpicture}
+			\begin{axis}[
+				pamaxis,
+				width=0.85\textwidth,
+				height=4.0cm,
+				xlabel={$f$},
+				ylabel={$S(f)$ e $H_r(f)$},
+				ylabel style={at={(axis cs:0,5.8)}, anchor=south},
+				xmin=-13, xmax=13,
+				ymin=-0.05, ymax=0.38,
+				axis lines=middle,
+				xtick={-10,-5,0,5,10},
+				xticklabels={$-2f_s$, $-f_s$, $0$, $f_s$, $2f_s$},
+				ytick={0},
+				yticklabels={$0$},
+				grid=none,
+				clip=false
+				]
+				
+				% Área sombreada representando a banda de passagem do filtro H_r(f)
+				% Desenhada de -fc a +fc (-2.5 a 2.5)
+				\fill[sinalcor!15, opacity=0.7] (axis cs:-2.5, 0) rectangle (axis cs:2.5, 0.3);
+				\draw[sinalcor, thick, dashed] (axis cs:-2.5, 0) -- (axis cs:-2.5, 0.3) -- (axis cs:2.5, 0.3) -- (axis cs:2.5, 0);
+				
+				% Impulsos de S(f) (Copiados do espectro original)
+				% k = 0
+				\draw[sinalcor, very thick] (axis cs:-1,0) -- (axis cs:-1,0.25);
+				\draw[sinalcor, very thick] (axis cs:1,0) -- (axis cs:1,0.25);
+				
+				% k = +1
+				\draw[sinalcor, very thick] (axis cs:4,0) -- (axis cs:4,0.225);
+				\draw[sinalcor, very thick] (axis cs:6,0) -- (axis cs:6,0.225);
+				
+				% k = -1
+				\draw[sinalcor, very thick] (axis cs:-6,0) -- (axis cs:-6,0.225);
+				\draw[sinalcor, very thick] (axis cs:-4,0) -- (axis cs:-4,0.225);
+				
+				% k = +2
+				\draw[sinalcor, very thick] (axis cs:9,0) -- (axis cs:9,0.159);
+				\draw[sinalcor, very thick] (axis cs:11,0) -- (axis cs:11,0.159);
+				
+				% k = -2
+				\draw[sinalcor, very thick] (axis cs:-11,0) -- (axis cs:-11,0.159);
+				\draw[sinalcor, very thick] (axis cs:-9,0) -- (axis cs:-9,0.159);
+				
+				% Pontos no topo dos impulsos
+				\addplot[only marks, mark=*, mark size=1.5pt] coordinates {
+					(-1,0.25) (1,0.25) (-6,0.225) (-4,0.225) (4,0.225) (6,0.225)
+					(-11,0.159) (-9,0.159) (9,0.159) (11,0.159)
+				};
+				
+				\node[below=3pt, font=\small] at (axis cs:-2.5,0) {$-f_c$};
+				\node[below=3pt, font=\small] at (axis cs:2.5,0) {$f_c$};
+				
+			\end{axis}
+		\end{tikzpicture}
+		\caption{Sobreposição dos sinais $S(f)$ e $H_r(f)$.}
+		\label{fig: sobreposicao_sf_hf_natural}
+	\end{figure}
+	
+	\vspace{-0.1em}
+	{\small Apenas os impulsos compreendidos no intervalo $[-f_c, f_c]$ sobrevivem à filtragem.}
+	
+\end{frame}
+
+% Sinal Reconstruído na Frequência
+\begin{frame}{Reconstrução da Amostragem Natural}{Sinal Reconstruído na Frequência}
+	
+	O sinal reconstruído $Y(f)$ é o produto da convolução no tempo, ou seja, $Y(f) = S(f) \cdot H_r(f)$. 
+	
+	O ganho do filtro ($T_s/\tau$) multiplica a amplitude atenuada da réplica central ($\tau/T_s$), restaurando perfeitamente a amplitude original do espectro base ($X(f)$):
+	
+	\vspace{-0.2em}
+	\centering
+	
+	\begin{figure}
+		\begin{tikzpicture}
+			\begin{axis}[
+				pamaxis,
+				width=0.85\textwidth,
+				height=4.0cm,
+				xlabel={$f$},
+				ylabel={$Y(f) = S(f)H_r(f)$},
+				xmin=-13, xmax=13,
+				ymin=-0.2, ymax=1.3,
+				axis lines=middle,
+				xtick={-5, 0, 5},
+				xticklabels={$-f_s$, $0$, $f_s$},
+				ytick={0, 1},
+				yticklabels={$0$, $1$},
+				grid=none,
+				clip=false
+				]
+				
+				% Impulsos de Y(f) - Restaurados para amplitude 1
+				\draw[sinalcor, very thick] (axis cs:-1,0) -- (axis cs:-1,1);
+				\draw[sinalcor, very thick] (axis cs:1,0) -- (axis cs:1,1);
+				
+				% Pontos no topo
+				\addplot[only marks, mark=*, mark size=1.5pt] coordinates {
+					(-1,1) (1,1)
+				};
+				
+				% Indicações
+				\node[below=2pt] at (axis cs:-1,0) {$-f_0$};
+				\node[below=2pt] at (axis cs:1,0) {$f_0$};
+				
+				
+			\end{axis}
+		\end{tikzpicture}
+		\caption{Sinal reconstruído na frequência.}
+		\label{fig: sinal_reconstruido_frequencia_natural}
+	\end{figure}
+	
+	\vspace{-0.1em}
+	{\small As réplicas em múltiplos de $f_s$ foram zeradas ($0 \times \text{impulso} = 0$).}
+	
+\end{frame}
+
+% Sinal Reconstruído no Tempo
+\begin{frame}{Reconstrução da Amostragem Natural}{Sinal Reconstruído no Tempo}
+	
+	Aplicando a Transformada Inversa de Fourier ao espectro recuperado, $y(t) = \mathcal{F}^{-1}\{Y(f)\}$, obtemos exatamente o sinal original no tempo, sem distorções.
+	
+	\vspace{0.5em}
+	
+	\def\Ts{0.2}
+	\def\Tau{0.05}
+	\def\Nam{5}
+	
+	\begin{figure}
+		\centering
+		\begin{tikzpicture}
+			\begin{axis}[
+				pamaxis,
+				width=0.9\textwidth,
+				height=4.0cm,
+				ylabel={$y(t) \approx x(t)$},
+				xlabel={$t$},
+				trig format=rad,
+				ymin=-1.3, ymax=1.45,
+				xmin=-0.1, xmax=1.1,
+				axis lines=middle
+				]
+				
+				% Trem de pulsos atenuado no fundo (Para dar o contexto de onde ele veio)
+				\pgfplotsextra{%
+					\foreach \n in {0,...,\Nam}{%
+						\pgfmathsetmacro\xa{\n*\Ts - \Tau/2}%
+						\pgfmathsetmacro\xb{\n*\Ts + \Tau/2}%
+						
+						\draw[
+						gray!40,
+						line width=.6pt,
+						fill=gray!10
+						]
+						(axis cs:\xa,0) --
+						(axis cs:\xa,{cos(4*pi*\xa)}) --
+						plot[
+						domain=\xa:\xb,
+						samples=25,
+						smooth
+						]
+						(axis cs:\x,{cos(4*pi*\x)}) --
+						(axis cs:\xb,{cos(4*pi*\xb)}) --
+						(axis cs:\xb,0) --
+						cycle;
+					}%
+				}
+				
+				% Sinal x(t) reconstruído perfeitamente
+				\addplot[
+				sinalcor,
+				line width=1.5pt,
+				smooth,
+				domain=0:1,
+				samples=300
+				]
+				{cos(4*pi*x)};
+				
+				
+			\end{axis}
+		\end{tikzpicture}
+		\caption{Sinal contínuo recuperado a partir dos pulsos de amostragem natural.}
+		\label{fig: sinal_natural_reconstruido}
+	\end{figure}
+	
+	\vspace{0.2em}
+	{\small Se o Critério de Nyquist ($f_s > 2f_m$) for satisfeito, a informação contida nos topos dos pulsos é suficiente para interpolar e restaurar a onda contínua $x(t)$.}
+	
+\end{frame}

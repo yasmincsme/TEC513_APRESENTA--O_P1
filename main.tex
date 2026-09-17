@@ -8,6 +8,12 @@
 \pgfplotsset{compat=1.18}
 \usetikzlibrary{arrows.meta,calc}
 
+\setbeamertemplate{caption}[numbered]
+
+\usepackage[alf]{abntex2cite}
+\hypersetup{hidelinks}
+
+ 
 % ------------------------------------------------------------------ ajustes
 \definecolor{sinalcor}{HTML}{1F4E79}
 \newcommand{\sinal}{sin(deg(2*pi*0.75*x + 0.4))}   % x(t)
@@ -250,56 +256,16 @@
 \maketitle % generate the title slide
 
 \input{topicos/intro}
-\input{topicos/params}    % parâmetros fixos — vêm antes da teoria
-\input{topicos/teoric}    % abertura da fundamentação teórica
-\input{topicos/ideal}     % método ideal: geral -> parâmetros fixos -> reconstrução
-\input{topicos/flattop}   % método topo-plano
+\input{topicos/params}    
+\input{topicos/teoric}   
+\input{topicos/ideal}    
+\input{topicos/natural}
+\input{topicos/flattop}  
 
-\begin{frame}{Columns}
-	Splitting the page is easy and common.
+\begin{frame}[allowframebreaks]{Referências}
 
-	Typically, one side has a picture and the other text:
-
-	\vspace{20pt}
-
-	\begin{columns}
-		\begin{column}{0.6\textwidth}
-			This is the first column.\\[10pt]
-			You can have some texts here.
-		\end{column}
-
-		\begin{column}{0.3\textwidth}
-			And this is the second one.\\[10pt]
-			You can have some pictures or tables here.
-		\end{column}
-	\end{columns}
-
+	\bibliography{bibliography} 
+	
 \end{frame}
 
-\begin{frame}{Fonts}
-
-	The priority when choosing a font is readability.
-
-	Here, we give some advice:
-	\begin{itemize}
-		\item Use serif (default) fonts only with high-resolution projectors or monitors.
-		\item Use \textsf{sans-serif} fonts otherwise.
-		\item Use \textit{italic} or \textbf{bold} fonts to emphasize or highlight points.
-		\item We also provide an \alert{alert} font for emphasise.
-		\item Use \texttt{monospace} fonts to display codes.
-	\end{itemize}
-
-\end{frame}
-
-\section{Summary}
-
-\begin{frame}{Good Luck!}
-	\begin{itemize}
-		\item Enough for an introduction! You should know enough by now.
-		\item If you have corrections or suggestions, please feel free to contact \href{mailto:ruisong20@gmail.com}{me}!
-        \item You can also find this project on \href{https://github.com/wurahara/PolyU-Beamer-Slides}{Github}! Stars are welcome!
-	\end{itemize}
-\end{frame}
-
-\backmatter % generate the final slide
 \end{document}
