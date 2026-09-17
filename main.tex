@@ -7,6 +7,12 @@
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.18}
 \usetikzlibrary{arrows.meta,calc}
+
+\setbeamertemplate{caption}[numbered]
+
+\usepackage[alf]{abntex2cite}
+\hypersetup{hidelinks}
+
  
 % ------------------------------------------------------------------ ajustes
 \definecolor{sinalcor}{HTML}{1F4E79}
@@ -229,5 +235,14 @@
 %\input{topicos/flattop}
 %\input{topicos/metodos}
 
+\begin{frame}[allowframebreaks]{Referências}
+	
+	% Define o estilo visual da bibliografia para ABNT (Autor, Ano)
+	\bibliographystyle{abntex2-alf} 
+	
+	% Chama o seu arquivo .bib
+	\bibliography{bibliography} 
+	
+\end{frame}
 
 \end{document}
