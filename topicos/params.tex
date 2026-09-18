@@ -186,36 +186,3 @@
 \end{frame}
 
 
-% =========================================================
-% CASO 5
-% =========================================================
-
-\begin{frame}{Caso de Teste 5}{Efeito de Abertura — Distorção no Flat-Top}
-	\small
-	
-	\textbf{Parâmetros da simulação:}
-	
-	\begin{center}
-		\begin{tabular}{ll}
-			\hline
-			Sinal de entrada & $x(t)=\cos(2\pi\cdot2t)+0.5\cos(2\pi\cdot18t)$ \\
-			Corte do anti-aliasing & $f_{c,aa}=4$~Hz \\
-			Frequência de amostragem & $f_s=10$~Hz \\
-			Período de amostragem & $T_s=1/f_s=0.1$~s \\
-			Largura dos pulsos & $\tau=0.09$~s \\
-			Corte da reconstrução & $f_{c,rec}=4$~Hz \\
-			\hline
-		\end{tabular}
-	\end{center}
-	
-	\vspace{0.5em}
-	
-	\textbf{Comportamento esperado:}
-	
-	\begin{itemize}
-		\item \textbf{Filtro AA e Amostragem:} é preservado a senoide de 2~Hz e $f_s=10$ satisfaz o critério de Nyquist.
-		\item Como $\tau=0.09$~s está próximo de $T_s=0.1$~s, ocorre o \textbf{efeito de abertura}. A largura de $\tau$ introduz uma envoltória $\operatorname{sinc}$ no espectro, atenuando a amplitude da componente de 2~Hz.
-		\item \textbf{Reconstrução:} o filtro $H_{\mathrm{eq}}$ compensa a atenuação introduzida pela envoltória $\operatorname{sinc}$, recuperando a amplitude original.
-	\end{itemize}
-	
-\end{frame}
