@@ -1,11 +1,7 @@
-% ============================================================================
-%  Parâmetros do estudo — vêm ANTES da fundamentação teórica, porque todos os
-%  métodos (ideal, natural e topo-plano) são demonstrados com estes valores.
-% ============================================================================
 
-\section{Parâmetros do Estudo}
+\section{Simulação}
 
-\begin{frame}[allowframebreaks]{Parâmetros fixos}
+\begin{frame}[allowframebreaks]{Simulação}{Parâmetros fixos}
     \small
 
     \textbf{Sinal original e espectro:}
@@ -38,35 +34,188 @@
         f_s > 2f_{max} = 4\,\text{Hz}
     \]
 
-    \[
-        f_s = 5\,\text{Hz}
-        \implies
-        T_s = \frac{1}{5}\,\text{s}
-        \implies
-        \text{banda de guarda} = 5 - 4 = 1\,\text{Hz}
-    \]
-
     A partir dessa preparação, utiliza-se a equação filtrada em banda para realizar as amostragens: \begin{align*} x_f(t) = \cos(2\pi \cdot 2t) \end{align*}
 
 \end{frame}
 
-\begin{frame}{Parâmetros fixos}{Resumo}
-    \small
-    Estes são os valores usados em \textbf{todas} as demonstrações e figuras a seguir:
-    \begin{center}
-    \begin{tabular}{ll}
-        \hline
-        Sinal amostrado (pós anti-aliasing) & $x_f(t) = \cos(2\pi \cdot 2t)$ \\
-        Frequência do sinal & $f_0 = f_{max} = 2$~Hz \\
-        Corte do anti-aliasing & $f_c = 8$~Hz \\
-        Frequência de amostragem & $f_s = 5$~Hz \\
-        Período de amostragem & $T_s = 0{,}2$~s \\
-        Banda de guarda & $f_s - 2f_{max} = 1$~Hz \\
-        \hline
-    \end{tabular}
-    \end{center}
+% =========================================================
+% CASO 1
+% =========================================================
 
-    \vspace{0.5em}
-    Para cada método, o roteiro é o mesmo: descrição analítica geral, aplicação a
-    $x_f(t)$ com estes parâmetros e, por fim, o filtro de reconstrução.
+\begin{frame}{Caso de Teste 1}{Cenário Ideal}
+	\small
+	
+	\textbf{Parâmetros da simulação:}
+	
+	\begin{center}
+		\begin{tabular}{ll}
+			\hline
+			Sinal de entrada & $x(t)=\cos(2\pi\cdot2t)+0.5\cos(2\pi\cdot18t)$ \\
+			Corte do anti-aliasing & $f_{c,aa}=4$~Hz \\
+			Frequência de amostragem & $f_s=6$~Hz \\
+			Período de amostragem & $T_s=1/f_s=1/6\approx0.1667$~s \\
+			Largura dos pulsos & $\tau=0.1$~s \\
+			Corte da reconstrução & $f_{c,rec}=3$~Hz \\
+			\hline
+		\end{tabular}
+	\end{center}
+	
+	\vspace{0.5em}
+	
+	\textbf{Comportamento esperado:}
+	
+	\begin{itemize}
+		\item \textbf{Filtro AA:} elimina a componente de 18~Hz, restando apenas a senoide de 2~Hz.
+		\item \textbf{Amostragem:} $f_s=6$~Hz respeita Nyquist para $f_{\max}=2$~Hz, pois
+		$6>2\cdot2=4$~Hz.
+		\item \textbf{Reconstrução:} o filtro com corte em $3$~Hz isola a banda base e elimina as réplicas espectrais.
+		\item O sinal reconstruído esperado é uma senoide de 2~Hz, correspondente ao sinal filtrado.
+	\end{itemize}
+	
+\end{frame}
+
+
+% =========================================================
+% CASO 2
+% =========================================================
+
+\begin{frame}{Caso de Teste 2}{Aliasing Clássico — Falha do Filtro Anti-Aliasing}
+	\small
+	
+	\textbf{Parâmetros da simulação:}
+	
+	\begin{center}
+		\begin{tabular}{ll}
+			\hline
+			Sinal de entrada & $x(t)=\cos(2\pi\cdot2t)+0.5\cos(2\pi\cdot18t)$ \\
+			Corte do anti-aliasing & $f_{c,aa}=20$~Hz \\
+			Frequência de amostragem & $f_s=5$~Hz \\
+			Período de amostragem & $T_s=1/f_s=0.2$~s \\
+			Largura dos pulsos & $\tau=0.05$~s \\
+			Corte da reconstrução & $f_{c,rec}=2.5$~Hz \\
+			\hline
+		\end{tabular}
+	\end{center}
+	
+	\vspace{0.5em}
+	
+	\textbf{Comportamento esperado:}
+	
+	\begin{itemize}
+		\item \textbf{Filtro AA:} com $f_{c,aa}=20$~Hz, a componente de 18~Hz permanece no sinal.
+		\item \textbf{Amostragem:} $f_s=5$~Hz é insuficiente para representar a componente de 18~Hz.
+		\item A componente sofre \textbf{aliasing}, produzindo réplicas em frequências da forma $f_{\text{réplica}}=|f_{\text{original}}-k f_s|.$
+		\item \textbf{Reconstrução:} as componentes resultantes interferem na banda base, produzindo um sinal temporal distorcido.
+	\end{itemize}
+	
+\end{frame}
+
+
+% =========================================================
+% CASO 3
+% =========================================================
+
+\begin{frame}{Caso de Teste 3}{Aliasing da Frequência Fundamental — Violação de Nyquist}
+	\small
+	
+	\textbf{Parâmetros da simulação:}
+	
+	\begin{center}
+		\begin{tabular}{ll}
+			\hline
+			Sinal de entrada & $x(t)=\cos(2\pi\cdot2t)+0.5\cos(2\pi\cdot18t)$ \\
+			Corte do anti-aliasing & $f_{c,aa}=10$~Hz \\
+			Frequência de amostragem & $f_s=3$~Hz \\
+			Período de amostragem & $T_s=1/f_s\approx0.3333$~s \\
+			Largura dos pulsos & $\tau=0.1$~s \\
+			Corte da reconstrução & $f_{c,rec}=1.5$~Hz \\
+			\hline
+		\end{tabular}
+	\end{center}
+	
+	\vspace{0.5em}
+	
+	\textbf{Comportamento esperado:}
+	
+	\begin{itemize}
+		\item \textbf{Filtro AA:} elimina a componente de 18~Hz, preservando a componente de 2~Hz.
+		\item \textbf{Amostragem:} $f_s=3$~Hz viola o critério de Nyquist, pois
+		$f_s=3 < 2f_{\max}=4~\text{Hz}$.
+		\item A componente de 2~Hz sofre aliasing e é rebatida para $|2-3|=1~\text{Hz}$.
+		\item \textbf{Reconstrução:} o filtro com $f_{c,rec}=1.5$~Hz seleciona a componente de 1~Hz.
+		\item O sinal reconstruído será uma senoide limpa de 1~Hz, embora o sinal original filtrado possua 2~Hz.
+	\end{itemize}
+	
+\end{frame}
+
+
+% =========================================================
+% CASO 4
+% =========================================================
+
+\begin{frame}{Caso de Teste 4}{Má Reconstrução — Filtro Reconstrutor Muito Largo}
+	\small
+	
+	\textbf{Parâmetros da simulação:}
+	
+	\begin{center}
+		\begin{tabular}{ll}
+			\hline
+			Sinal de entrada & $x(t)=\cos(2\pi\cdot2t)+0.5\cos(2\pi\cdot18t)$ \\
+			Corte do anti-aliasing & $f_{c,aa}=4$~Hz \\
+			Frequência de amostragem & $f_s=5$~Hz \\
+			Período de amostragem & $T_s=1/f_s=0.2$~s \\
+			Largura dos pulsos & $\tau=0.05$~s \\
+			Corte da reconstrução & $f_{c,rec}=20$~Hz \\
+			\hline
+		\end{tabular}
+	\end{center}
+	
+	\vspace{0.5em}
+	
+	\textbf{Comportamento esperado:}
+	
+	\begin{itemize}
+		\item \textbf{Filtro AA:} elimina a componente de 18~Hz, preservando apenas a componente de 2~Hz.
+		\item \textbf{Amostragem:} $f_s=5$~Hz satisfaz Nyquist para $f_{\max}=2$~Hz, pois
+		$5>4$~Hz.
+		\item A amostragem produz réplicas espectrais centradas em múltiplos de $f_s$: $\pm5,\ \pm10,\ \pm15,\ldots~\text{Hz}$.
+		\item \textbf{Reconstrução:} o corte em $20$~Hz permite a passagem de diversas réplicas espectrais. 
+	\end{itemize}
+	
+\end{frame}
+
+
+% =========================================================
+% CASO 5
+% =========================================================
+
+\begin{frame}{Caso de Teste 5}{Efeito de Abertura — Distorção no Flat-Top}
+	\small
+	
+	\textbf{Parâmetros da simulação:}
+	
+	\begin{center}
+		\begin{tabular}{ll}
+			\hline
+			Sinal de entrada & $x(t)=\cos(2\pi\cdot2t)+0.5\cos(2\pi\cdot18t)$ \\
+			Corte do anti-aliasing & $f_{c,aa}=4$~Hz \\
+			Frequência de amostragem & $f_s=10$~Hz \\
+			Período de amostragem & $T_s=1/f_s=0.1$~s \\
+			Largura dos pulsos & $\tau=0.09$~s \\
+			Corte da reconstrução & $f_{c,rec}=4$~Hz \\
+			\hline
+		\end{tabular}
+	\end{center}
+	
+	\vspace{0.5em}
+	
+	\textbf{Comportamento esperado:}
+	
+	\begin{itemize}
+		\item \textbf{Filtro AA e Amostragem:} é preservado a senoide de 2~Hz e $f_s=10$ satisfaz o critério de Nyquist.
+		\item Como $\tau=0.09$~s está próximo de $T_s=0.1$~s, ocorre o \textbf{efeito de abertura}. A largura de $\tau$ introduz uma envoltória $\operatorname{sinc}$ no espectro, atenuando a amplitude da componente de 2~Hz.
+		\item \textbf{Reconstrução:} o filtro $H_{\mathrm{eq}}$ compensa a atenuação introduzida pela envoltória $\operatorname{sinc}$, recuperando a amplitude original.
+	\end{itemize}
+	
 \end{frame}
