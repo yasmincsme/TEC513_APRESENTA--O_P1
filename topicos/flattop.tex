@@ -18,9 +18,9 @@
     ftdemot, width=0.205\textwidth, height=0.150\textheight,
     title style={font=\tiny, align=center},
     xlabel={$t$},
-    xtick={0,2*\ftTs,4*\ftTs,6*\ftTs},
-    xticklabels={$0$,$2T_s$,$4T_s$,$6T_s$},
-    minor xtick={\ftTs,3*\ftTs,5*\ftTs,7*\ftTs},
+    xtick={0,4*\ftTs,8*\ftTs},
+    xticklabels={$0$,$4T_s$,$8T_s$},
+    minor xtick={2*\ftTs,6*\ftTs,10*\ftTs},
   },
   fpfreq/.style={
     ftdemof, width=0.225\textwidth, height=0.150\textheight,
@@ -364,8 +364,8 @@
   \begin{tikzpicture}
   \begin{axis}[ftaxis, width=0.60\textwidth, height=0.24\textheight,
                xlabel={$t$},
-               xtick={0,2*\ftTs,4*\ftTs,6*\ftTs},
-               xticklabels={$0$,$2T_s$,$4T_s$,$6T_s$},
+               xtick={0,2*\ftTs,4*\ftTs,6*\ftTs,8*\ftTs,10*\ftTs},
+               xticklabels={$0$,$2T_s$,$4T_s$,$6T_s$,$8T_s$,$10T_s$},
                legend style={font=\tiny, at={(0.5,1.03)}, anchor=south,
                              legend columns=2, draw=none, fill=none,
                              column sep=1em}]
@@ -527,8 +527,8 @@
   \begin{tikzpicture}
   \begin{axis}[ftaxis, width=0.60\textwidth, height=0.26\textheight,
                xlabel={$t$},
-               xtick={0,2*\ftTs,4*\ftTs,6*\ftTs},
-               xticklabels={$0$,$2T_s$,$4T_s$,$6T_s$},
+               xtick={0,2*\ftTs,4*\ftTs,6*\ftTs,8*\ftTs,10*\ftTs},
+               xticklabels={$0$,$2T_s$,$4T_s$,$6T_s$,$8T_s$,$10T_s$},
                legend style={font=\tiny, at={(0.5,1.03)}, anchor=south,
                              legend columns=2, draw=none, fill=none,
                              column sep=1em}]

@@ -49,10 +49,10 @@
 \usepgfplotslibrary{groupplots}
 
 % ---------------- Parâmetros (altere aqui) ----------------
-\newcommand{\ftfzero}{2}    % frequência de x(t) após o filtro anti-aliasing [Hz]
-\newcommand{\ftfs}{5}       % frequência de amostragem f_s [Hz] (parâmetro fixo do estudo)
+\newcommand{\ftfzero}{1.6}  % frequência de x(t) após o filtro anti-aliasing [Hz]
+\newcommand{\ftfs}{8}       % frequência de amostragem f_s [Hz] (parâmetro fixo do estudo)
 \newcommand{\ftduty}{0.5}   % razão tau/T_s (0 < duty <= 1)
-\newcommand{\fttmax}{1.5}   % duração exibida [s] (3 períodos de 2 Hz)
+\newcommand{\fttmax}{1.25}  % duração exibida [s] (2 períodos de 1,6 Hz)
 \newcommand{\ftpico}{0.5}   % pico onde o atraso é indicado em (c) e (d)
 % -----------------------------------------------------------
 
@@ -267,6 +267,11 @@
 
 \end{frame}
 
-\input{topicos/apendice}
+\begin{frame}[plain]
+	\vfill
+	\centering
+	{\color{themeblue2}\fontsize{40}{48}\selectfont\bfseries Obrigado!}
+	\vfill
+\end{frame}
 
 \end{document}
