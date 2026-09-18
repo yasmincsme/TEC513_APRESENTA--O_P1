@@ -9,8 +9,9 @@
 \usetikzlibrary{arrows.meta,calc}
 
 \setbeamertemplate{caption}[numbered]
+\setbeamertemplate{bibliography item}[text]
 
-\usepackage[alf]{abntex2cite}
+\usepackage[num]{abntex2cite}
 \hypersetup{hidelinks}
 
  
@@ -122,10 +123,6 @@
 }
 \pgfmathsetmacro\ftAmeio{0.5*\ftA}
 \newcommand{\ftstrut}{\rule[-1ex]{0pt}{3ex}}   % alinha as 2as linhas dos títulos
-
-% Cores das duas etapas nas demonstrações
-\newcommand{\ftamos}[1]{{\color{ftazul}#1}}             % etapa 1: amostragem ideal
-\newcommand{\ftret}[1]{{\color{ftlaranja!90!black}#1}}  % etapa 2: retenção (pulso h)
 
 \pgfplotsset{
   ftfreqaxis/.style={
@@ -259,7 +256,7 @@
 \input{topicos/teoric}   
 %\input{topicos/ideal}    
 \input{topicos/natural}
-%\input{topicos/flattop}  
+\input{topicos/flattop}
 %simulacao
 \input{topicos/params}   
 
