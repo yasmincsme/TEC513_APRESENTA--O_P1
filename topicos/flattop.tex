@@ -395,15 +395,16 @@
   \vspace{0.8em}
   \begin{center}
   \begin{tikzpicture}[font=\footnotesize,
-                      bloco/.style={draw, rounded corners, minimum height=1.1cm,
-                                    align=center, thick, inner xsep=7pt},
+                      bloco/.style={draw, rounded corners, thick, align=center,
+                                    minimum width=2.8cm, minimum height=1.2cm},
+                      rotulo/.style={align=center, font=\scriptsize},
                       seta/.style={-{Stealth[length=5pt,width=4pt]}, thick}]
-    \node[align=center] (in)  at (-2.6,0) {Sinal de mensagem\\amostrado};
-    \node[bloco, draw=ftverde!60!black, fill=ftverde!12, minimum width=2.4cm]
-         (lpf) at (0.6,0) {Filtro de interpolação\\passa-baixas};
-    \node[bloco, draw=ftroxo!70!black, fill=ftroxo!12, minimum width=1.9cm]
-         (eq)  at (4.0,0) {Equalizador};
-    \node[align=center] (out) at (6.7,0) {Sinal de mensagem\\reconstruído};
+    \node[rotulo] (in)  at (-3.4,0) {Sinal de mensagem\\amostrado};
+    \node[bloco, draw=ftverde!60!black, fill=ftverde!12]
+         (lpf) at (0,0) {Filtro de interpolação\\passa-baixas\\[1pt]{\tiny $H_r(f)$}};
+    \node[bloco, draw=ftroxo!70!black, fill=ftroxo!12]
+         (eq)  at (3.5,0) {Equalizador\\[1pt]{\tiny $E(f)$}};
+    \node[rotulo] (out) at (7.1,0) {Sinal de mensagem\\reconstruído};
 
     \draw[seta] (in)  -- (lpf);
     \draw[seta] (lpf) -- (eq);
@@ -425,29 +426,30 @@
 \begin{frame}{Método Topo-Plano: Reconstrução}{Solução}
 
   \begin{itemize}
-    \item Idealmente, a resposta em amplitude do equalizador é dada por:
+    \item O filtro de interpolação passa-baixas isola a réplica central, e seu
+          ganho $\dfrac{T_s}{\tau}$ compensa a atenuação dessa réplica:
   \end{itemize}
 
-  \vspace{0.4em}
+  \vspace{-0.2em}
   \begin{equation}
-    E(f) = \frac{1}{|H(f)|}
-         = \frac{1}{\tau\,\mathrm{sinc}(f\tau)}
-         = \frac{\pi f}{\operatorname{sen}(\pi f \tau)}
-    \label{eq: equalizador_flattop}
+    H_r(f) =
+    \begin{cases}
+      \dfrac{T_s}{\tau}, & |f| \leq f_c \\[6pt]
+      0, & |f| > f_c
+    \end{cases}
+    \label{eq: filtro_reconstrucao_flattop}
   \end{equation}
 
-  \vspace{0.6em}
-  \begin{center}
-  \fcolorbox{ftazul!70!black}{ftazul!7}{%
-    \begin{minipage}{0.93\textwidth}
-      \small
-      \textbf{Atenção à notação:} \citeonline{haykin2001sinais} escrevem essa
-      resposta como $1/|H(j\omega)| = 1/[T_0\,\mathrm{sinc}(\omega T_0/2)]$,
-      usando $\mathrm{sinc}(x)=\operatorname{sen}(x)/x$. Aqui adotamos
-      $\mathrm{sinc}(x)=\operatorname{sen}(\pi x)/(\pi x)$, com
-      $T_0 \equiv \tau$ e $\omega = 2\pi f$.
-    \end{minipage}}
-  \end{center}
+  \begin{itemize}
+    \item Resta a envoltória $\mathrm{sinc}(f\tau)$, corrigida pelo equalizador:
+  \end{itemize}
+
+  \vspace{-0.2em}
+  \begin{equation}
+    E(f) = \frac{1}{\mathrm{sinc}(f\tau)}
+         = \frac{\pi f \tau}{\operatorname{sen}(\pi f \tau)}
+    \label{eq: equalizador_flattop}
+  \end{equation}
 
 \end{frame}
 
@@ -470,11 +472,12 @@
     \addplot[ftimpulso, ftlaranja!90!black] coordinates {\ftrepsinc};
 
   \nextgroupplot[title={(b) Resposta do filtro passa-baixas\\[1pt]{\tiny\ftstrut
-                        $H_r(f)=T_s\,\Pi(f/f_s)$}}, yticklabels={$T_s$}]
+                        $H_r(f)=T_s/\tau$, $|f|\leq f_c$}},
+                 yticklabels={$\frac{T_s}{\tau}$}]
     \draw[ftverde!80!black, thick, fill=ftverde!18]
       (axis cs:-\ftfc,0) rectangle (axis cs:\ftfc,1);
     \node[font=\tiny, anchor=south west, inner sep=1pt]
-      at (axis cs:\ftfc,0.04) {$\frac{f_s}{2}$};
+      at (axis cs:\ftfc,0.04) {$f_c$};
 
   \nextgroupplot[title={(c) Espectro filtrado\\[1pt]{\tiny\ftstrut
                         $\tau\,\mathrm{sinc}(f\tau)X(f)$}},
@@ -497,7 +500,7 @@
                         $E(f)=\frac{1}{\mathrm{sinc}(f\tau)}$}},
                  xmin=-4, xmax=4, ymin=0, ymax=1.35,
                  xtick={-\ftfc,0,\ftfc},
-                 xticklabels={$-\frac{f_s}{2}$,$0$,$\frac{f_s}{2}$},
+                 xticklabels={$-f_c$,$0$,$f_c$},
                  ytick={1}, yticklabels={$1$}]
     \addplot[ftroxo, very thick, domain=-\ftfc:\ftfc, samples=200] {fpeq(x)};
 
