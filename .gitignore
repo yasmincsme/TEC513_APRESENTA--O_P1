@@ -1,0 +1,63 @@
+# ---------------------------------------------------------------------------
+# Artefatos de compilação LaTeX / Beamer
+# Apenas na raiz: source/ guarda imagens e PDFs de arte que SÃO versionados.
+# ---------------------------------------------------------------------------
+
+# Saída principal
+/*.pdf
+
+# Auxiliares do LaTeX
+/*.aux
+/*.log
+/*.out
+/*.toc
+/*.lof
+/*.lot
+
+# Beamer
+/*.nav
+/*.snm
+/*.vrb
+
+# latexmk
+/*.fdb_latexmk
+/*.fls
+/*.xdv
+
+# SyncTeX (inclui o arquivo temporário "main.synctex(busy)")
+/*.synctex.gz
+/*.synctex
+/*.synctex(busy)
+
+# Bibliografia
+/*.bbl
+/*.blg
+/*.bcf
+/*.run.xml
+
+# Índice / glossário
+/*.idx
+/*.ind
+/*.ilg
+/*.glo
+/*.gls
+/*.glg
+/*.acn
+/*.acr
+/*.alg
+
+# Diversos
+/*.figlist
+/*.makefile
+/*.auxlock
+/*.dpth
+/*.md5
+
+# Externalização do TikZ/pgfplots (\tikzexternalize[prefix=figs/])
+/figs/
+
+# Sistema operacional / editores
+.DS_Store
+Thumbs.db
+*~
+.*.swp

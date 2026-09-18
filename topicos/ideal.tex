@@ -1,0 +1,408 @@
+% ============================================================================
+%  Método Ideal (amostragem por trem de impulsos)
+%
+%  Ordem dos slides:
+%    A. Descrição analítica geral  (conceito, interpretação gráfica,
+%       demonstração no tempo e na frequência)
+%    B. Aplicação aos parâmetros fixos  (x_f(t) = cos(2 pi 2 t), f_s = 5 Hz)
+%    C. Reconstrução  (filtro, frequência, tempo e verificação numérica)
+%    D. Visão geral do processo + gancho para os métodos com pulso
+%
+%  Macros \ft... e \id... definidas no main.tex.
+%  As figuras usam os próprios parâmetros fixos: f_0 = 2 Hz e f_s = 5 Hz.
+% ============================================================================
+
+% ----------------------------------------------------------------------------
+%  A. DESCRIÇÃO ANALÍTICA GERAL
+% ----------------------------------------------------------------------------
+\begin{frame}{Método Ideal: Amostragem}{Análise no Domínio do Tempo}
+
+    Multiplicamos o sinal $x_f(t)$ por um trem de impulsos deslocados de $T_s$.
+    Cada impulso ``recolhe'' o valor instantâneo do sinal, sem qualquer retenção:
+    a amostra existe apenas no instante $t = nT_s$.
+
+    \vspace{1em}
+    A equação para a modulação é dada por:
+    \begin{equation*}
+        x_\delta(t) = x_f(t) \cdot p(t),
+        \qquad
+        p(t) = \sum_{n=-\infty}^{\infty} \delta(t - nT_s)
+    \end{equation*}
+
+    Pela propriedade de peneiramento do impulso,
+    $x_f(t)\,\delta(t - nT_s) = x_f(nT_s)\,\delta(t - nT_s)$:
+    \begin{equation*}
+        x_\delta(t) = \sum_{n=-\infty}^{\infty} x_f(nT_s)\, \delta(t - nT_s)
+    \end{equation*}
+
+    Não há pulso de retenção: o trem de impulsos é o único elemento do processo.
+
+\end{frame}
+
+\begin{frame}{Método Ideal: Amostragem}{Interpretação Gráfica}
+\centering
+\begin{minipage}[c][0.66\textheight][c]{0.92\textwidth}
+\centering
+
+% ------------------------------------------------------- (1) sinal original
+\only<1>{%
+\begin{tikzpicture}
+    \begin{axis}[pamaxis, ylabel={$x_f(t)$}]
+        \addplot[sinalcor, line width=1pt, smooth] {\sinal};
+    \end{axis}
+\end{tikzpicture}\par
+Sinal analógico de banda base $x_f(t)$.}
+
+% ------------------------------------------------------ (2) trem de impulsos
+\only<2>{%
+\begin{tikzpicture}
+    \begin{axis}[pamaxis, ylabel={$p(t)$}]
+        \addplot[draw=none] {0};
+        \pgfplotsextra{%
+            \foreach \n in {0,...,\Nam}{%
+                \pgfmathsetmacro\xn{\n*\Ts}%
+                \draw[sinalcor, line width=1pt, -{Stealth[length=5pt,width=4pt]}]
+                    (axis cs:\xn,0) -- (axis cs:\xn,0.85);
+                \draw[gray, line width=.4pt] (axis cs:\xn,-0.07) -- (axis cs:\xn,0.07);}}
+        \marcaTs
+    \end{axis}
+\end{tikzpicture}\par
+Trem de impulsos com período $T_s$, todos de área unitária.}
+
+% ------------------------------------------- (3) produto (amostragem ideal)
+\only<3>{%
+\begin{tikzpicture}
+    \begin{axis}[pamaxis, ylabel={$x_\delta(t)$}]
+        \addplot[gray!50, dashed, line width=.7pt, smooth] {\sinal};
+        \pgfplotsextra{%
+            \foreach \n in {0,...,\Nam}{%
+                \pgfmathsetmacro\xn{\n*\Ts}%
+                \pgfmathsetmacro\yn{sin(deg(2*pi*0.75*\n*\Ts + 0.4))}%
+                \draw[sinalcor, line width=1pt, -{Stealth[length=5pt,width=4pt]}]
+                    (axis cs:\xn,0) -- (axis cs:\xn,\yn);}}
+        \marcaTs
+    \end{axis}
+\end{tikzpicture}\par
+Produto: impulsos de área $x_f(nT_s)$, nulos fora dos instantes de amostragem.}
+
+\end{minipage}
+\end{frame}
+
+\begin{frame}{Método Ideal: Amostragem}{Demonstração no Domínio do Tempo}
+\small
+No domínio do tempo, o processo é apenas a \idamos{multiplicação do sinal por um trem
+de impulsos}, sem etapa de retenção. Aplicando o peneiramento, cada impulso fica
+ponderado pela sua amostra:
+\begin{equation*}
+  x_\delta(t) = x_f(t)\cdot \idamos{p(t)}
+  = \boxed{\;\sum_{n=-\infty}^{\infty} x_f(nT_s)\, \delta(t - nT_s)\;},
+  \qquad
+  \idamos{p(t) = \sum_{n=-\infty}^{\infty} \delta(t - nT_s)}
+\end{equation*}
+\begin{center}
+\begin{tikzpicture}
+\begin{groupplot}[group style={group name=g, group size=3 by 1, horizontal sep=1.3cm}, ftdemot, height=0.18\textheight]
+\nextgroupplot[title={(a) Sinal original\\[1pt]{\tiny\ftstrut $x_f(t)$}}]
+  \addplot[ftazul!40!black, thick, domain=0:\fttmax, samples=300] {cos(deg(2*pi*\ftfzero*x))};
+\nextgroupplot[title={(b) Trem de impulsos\\[1pt]{\tiny\ftstrut $p(t)$}}]
+  \addplot[ycomb, ftazul, thick] coordinates {\ftimpt};
+  \addplot[ftimppos, ftazul] coordinates {\ftimpt};
+  \draw[gray, <->, >=stealth] (axis cs:\ftTs,1.18) -- node[above, font=\tiny, inner sep=1pt]{$T_s$} (axis cs:2*\ftTs,1.18);
+\nextgroupplot[title={(c) Sinal amostrado\\[1pt]{\tiny\ftstrut $x_\delta(t)$}}]
+  \addplot[gray!55, dashed, domain=0:\fttmax, samples=300] {cos(deg(2*pi*\ftfzero*x))};
+  \addplot[ycomb, ftazul, thick] coordinates {\ftamostras};
+  \addplot[ftimppos, ftazul] coordinates {\ftamospos};
+  \addplot[ftimpneg, ftazul] coordinates {\ftamosneg};
+\end{groupplot}
+\ftop{1}{2}{\times}
+\ftop{2}{3}{=}
+\end{tikzpicture}
+\end{center}
+O sinal amostrado só existe nos instantes $t = nT_s$: entre as amostras não há informação.
+\end{frame}
+
+\begin{frame}{Método Ideal: Amostragem}{Demonstração no Domínio da Frequência}
+\small
+Aplicando a transformada de Fourier, o produto no tempo vira convolução na frequência.
+Como a convolução com um impulso desloca o espectro, cada impulso de
+$\idamos{P(f)}$ cria uma cópia inteira de $X_f(f)$:
+\begin{equation*}
+  X_\delta(f) = X_f(f) * \idamos{P(f)},
+  \quad
+  \idamos{P(f) = \frac{1}{T_s}\sum_{n=-\infty}^{\infty} \delta(f - nf_s)}
+  \;\Longrightarrow\;
+  \boxed{\; X_\delta(f) = f_s\sum_{n=-\infty}^{\infty} X_f(f - nf_s) \;}
+\end{equation*}
+\begin{center}
+\begin{tikzpicture}
+\begin{groupplot}[group style={group name=g, group size=3 by 1, horizontal sep=1.3cm}, ftdemof, height=0.18\textheight]
+\nextgroupplot[title={(a) Espectro original\\[1pt]{\tiny\ftstrut $X_f(f)$}}, yticklabels={$\frac{1}{2}$}]
+  \addplot[ftimpulso, ftazul!40!black] coordinates {(-\ftfzero,1) (\ftfzero,1)};
+\nextgroupplot[title={(b) Trem de impulsos\\[1pt]{\tiny\ftstrut $P(f)$}}, yticklabels={$\frac{1}{T_s}$}]
+  \addplot[ftimpulso, ftazul] coordinates {\ftimpf};
+\nextgroupplot[title={(c) Sinal amostrado\\[1pt]{\tiny\ftstrut $X_\delta(f)$}}, yticklabels={$\frac{1}{2T_s}$}]
+  \addplot[ftimpulso, ftazul] coordinates {\ftrepideal};
+\end{groupplot}
+\ftop{1}{2}{*}
+\ftop{2}{3}{=}
+\end{tikzpicture}
+\end{center}
+Todas as réplicas têm a mesma amplitude: não há envelope ponderando o espectro.
+\end{frame}
+
+\begin{frame}{Método Ideal: Amostragem}{Condição de Recuperação}
+\small
+A banda base ocupa $|f| \le f_{max}$ e a réplica vizinha começa em $f_s - f_{max}$.
+Para que não haja sobreposição:
+\begin{equation*}
+  f_s - f_{max} > f_{max}
+  \quad\Longrightarrow\quad
+  \boxed{\; f_s > 2 f_{max} \;}
+  \qquad
+  \text{(banda de guarda } = f_s - 2f_{max})
+\end{equation*}
+\begin{itemize}
+  \item Satisfeita a condição, as réplicas ficam separadas e a banda base pode ser
+        isolada --- é o que torna a reconstrução possível.
+  \item Violada a condição, as réplicas invadem a banda base: \textit{aliasing}, que
+        nenhum filtro posterior desfaz.
+  \item Por isso o filtro anti-aliasing atua \textbf{antes} da amostragem, limitando
+        $f_{max}$ ao valor previsto no projeto.
+\end{itemize}
+\end{frame}
+
+% ----------------------------------------------------------------------------
+%  B. APLICAÇÃO AOS PARÂMETROS FIXOS
+% ----------------------------------------------------------------------------
+\begin{frame}{Método Ideal: Aplicação}{Parâmetros Fixos --- Domínio do Tempo}
+    \small
+    Com $x_f(t) = \cos(2\pi \cdot 2t)$, $f_s = 5$~Hz e $T_s = 0,2$~s:
+    \begin{align*}
+        x_\delta(t) &= x_f(t) \cdot \sum_{n=-\infty}^{\infty} \delta(t - nT_s)
+        = \sum_{n=-\infty}^{\infty} x_f(nT_s)\, \delta(t - nT_s) \\
+        &= \sum_{n=-\infty}^{\infty} \cos\!\left(2\pi \cdot 2 \cdot \frac{n}{5}\right) \delta\!\left(t - \frac{n}{5}\right)
+        = \sum_{n=-\infty}^{\infty} \cos\!\left(\frac{4\pi n}{5}\right) \delta\!\left(t - \frac{n}{5}\right)
+    \end{align*}
+
+    \textbf{Amostras (o padrão se repete a cada 5 amostras, pois $f_0/f_s = 2/5$):}
+    \[
+        \begin{array}{c|ccccc}
+            n & 0 & 1 & 2 & 3 & 4 \\ \hline
+            x_f(nT_s) & 1 & -0{,}809 & 0{,}309 & 0{,}309 & -0{,}809
+        \end{array}
+    \]
+
+    São $2{,}5$ amostras por período do sinal: o mínimo exigido por $f_s > 2f_{max}$.
+\end{frame}
+
+\begin{frame}{Método Ideal: Aplicação}{Parâmetros Fixos --- Domínio da Frequência}
+    \small
+    Substituindo $f_s = 5$~Hz na expressão do espectro amostrado:
+    $$X_\delta(f) = f_s \cdot \sum_{k=-\infty}^{\infty} X_f(f - k f_s) = 5 \cdot \sum_{k=-\infty}^{\infty} X_f(f - 5k)$$
+
+    \textbf{Análise das componentes:}
+    $$
+    \left.\begin{matrix}
+    k=0: \pm 2\text{ Hz} \\
+    k=1: 3 \text{ e } 7\text{ Hz} \\
+    k=-1: -7 \text{ e } -3\text{ Hz} \\
+    k=2: 8 \text{ e } 12\text{ Hz}
+    \end{matrix}\right\} \text{componentes em } \pm 2, \pm 3, \pm 7, \pm 8, \pm 12, \dots
+    $$
+
+    Cada réplica tem peso $f_s \cdot \frac{1}{2} = 2{,}5$: \textbf{todas com a mesma
+    amplitude}, pois não há pulso ponderando o espectro. A banda base ($2$~Hz) e a
+    primeira réplica ($3$~Hz) estão separadas --- não há \textit{aliasing}.
+\end{frame}
+
+% ----------------------------------------------------------------------------
+%  C. RECONSTRUÇÃO
+% ----------------------------------------------------------------------------
+\begin{frame}{Método Ideal: Reconstrução}{Filtro Passa-Baixas Ideal}
+    \small
+    Separadas as réplicas, basta descartar todas menos a banda base. O filtro de
+    reconstrução é um passa-baixas ideal de corte $f_s/2$ e ganho $T_s$:
+    \[
+        H_{PB}(f) =
+        \begin{cases}
+            T_s, & |f| < \dfrac{f_s}{2}\\[4pt]
+            0, & \text{caso contrário}
+        \end{cases}
+        \qquad\longrightarrow\qquad
+        \text{com os parâmetros fixos: }
+        \begin{cases}
+            0{,}2, & |f| < 2{,}5\,\text{Hz}\\
+            0, & \text{caso contrário}
+        \end{cases}
+    \]
+
+    \textbf{Verificação da separação:}
+    \[
+        \underbrace{2\,\text{Hz}}_{\text{banda base}} < \underbrace{2{,}5\,\text{Hz}}_{\text{corte}} < \underbrace{3\,\text{Hz}}_{\text{1ª réplica}}
+        \qquad \Longrightarrow \qquad
+        \text{margem de } 0{,}5\,\text{Hz de cada lado}
+    \]
+
+    Essa margem é a banda de guarda de $1$~Hz obtida com $f_s = 5$~Hz: se
+    $f_s \le 4$~Hz, a réplica em $f_s - 2$ entraria na banda base.
+\end{frame}
+
+\begin{frame}{Método Ideal: Reconstrução}{Demonstração no Domínio da Frequência}
+\small
+A reconstrução é o produto do espectro amostrado pelo passa-baixas. O ganho $T_s$
+cancela exatamente o fator $f_s$ introduzido pela amostragem:
+\begin{equation*}
+  X_r(f) = X_\delta(f)\cdot \idrec{H_{PB}(f)} = T_s\cdot\frac{1}{T_s}X_f(f) = \boxed{\,X_f(f)\,}
+  \qquad
+  \text{(com os valores: } 0{,}2 \cdot 5 \cdot \tfrac{1}{2} = \tfrac{1}{2}\text{)}
+\end{equation*}
+\begin{center}
+\begin{tikzpicture}
+\begin{groupplot}[group style={group name=g, group size=3 by 1, horizontal sep=1.3cm}, ftdemof, height=0.18\textheight]
+\nextgroupplot[title={(a) Espectro amostrado\\[1pt]{\tiny\ftstrut $X_\delta(f)$ e $H_{PB}(f)$}}, yticklabels={$\frac{1}{2T_s}$}]
+  \draw[ftroxo, densely dashed, fill=ftroxo!8] (axis cs:-\ftfc,0) rectangle (axis cs:\ftfc,1.15);
+  \addplot[ftimpulso, ftazul] coordinates {\ftrepideal};
+\nextgroupplot[title={(b) Passa-baixas ideal\\[1pt]{\tiny\ftstrut $H_{PB}(f)/T_s$}}, yticklabels={$1$},
+  visible on=<2->]
+  \addplot[ftroxo, thick, fill=ftroxo!8, visible on=<2->] coordinates
+    {(-\ftfc,0) (-\ftfc,1) (\ftfc,1) (\ftfc,0)};
+\nextgroupplot[title={(c) Sinal reconstruído\\[1pt]{\tiny\ftstrut $X_r(f) = X_f(f)$}}, yticklabels={$\frac{1}{2}$}]
+  \addplot[ftimpulso, ftverde, visible on=<3->] coordinates {(-\ftfzero,1) (\ftfzero,1)};
+\end{groupplot}
+\ftop{1}{2}{\times}
+\ftop{2}{3}{=}
+\end{tikzpicture}
+\end{center}
+Sem ponderação por $\mathrm{sinc}$ e sem termo de fase: o espectro recuperado é
+\textbf{idêntico} ao original, dispensando equalizador.
+\pause\pause
+\end{frame}
+
+\begin{frame}{Método Ideal: Reconstrução}{Demonstração no Domínio do Tempo}
+\small
+No tempo, a reconstrução é a convolução do sinal amostrado com a resposta ao impulso do
+passa-baixas, $h_{PB}(t) = \mathrm{sinc}(f_s t)$. Cada impulso vira um $\mathrm{sinc}$
+ponderado pela sua amostra:
+\begin{equation*}
+  x_r(t) = x_\delta(t) * \idrec{h_{PB}(t)}
+  = \sum_{n=-\infty}^{\infty} x_f(nT_s)\, \idrec{\mathrm{sinc}\!\big(f_s(t - nT_s)\big)}
+  = \boxed{\, x_f(t) \,}
+\end{equation*}
+A interpolação é exata porque $\mathrm{sinc}(f_s(t-nT_s))$ vale $1$ em $t = nT_s$ e
+$0$ nos demais instantes de amostragem: as caudas se cancelam entre si.
+\begin{center}
+\begin{tikzpicture}
+\begin{groupplot}[group style={group name=g, group size=3 by 1, horizontal sep=1.3cm}, ftdemot, height=0.18\textheight]
+\nextgroupplot[title={(a) Sinal amostrado\\[1pt]{\tiny\ftstrut $x_\delta(t)$}}]
+  \addplot[gray!55, dashed, domain=0:\fttmax, samples=300] {cos(deg(2*pi*\ftfzero*x))};
+  \addplot[ycomb, ftazul, thick] coordinates {\ftamostras};
+  \addplot[ftimppos, ftazul] coordinates {\ftamospos};
+  \addplot[ftimpneg, ftazul] coordinates {\ftamosneg};
+\nextgroupplot[title={(b) Núcleos de interpolação\\[1pt]{\tiny\ftstrut $x_f(nT_s)\,\mathrm{sinc}(f_s(t-nT_s))$}}, clip=true]
+  \idnucleos
+\nextgroupplot[title={(c) Soma dos núcleos\\[1pt]{\tiny\ftstrut $x_r(t) = x_f(t)$}}]
+  \draw[black!45, densely dashed, thin] (axis cs:0,1) -- (axis cs:\fttmax,1);
+  \addplot[gray!55, dashed, domain=0:\fttmax, samples=300] {cos(deg(2*pi*\ftfzero*x))};
+  \addplot[ftverde, thick, densely dashed, domain=0:\fttmax, samples=300, visible on=<3->]
+    {cos(deg(2*pi*\ftfzero*x))};
+\end{groupplot}
+\end{tikzpicture}\par\vspace{2pt}
+{\scriptsize
+\tikz[baseline=-0.6ex]\draw[ftazul, thick] (0,0) -- (0.4,0);\; amostras $x_f(nT_s)$
+\qquad
+\tikz[baseline=-0.6ex]\draw[ftroxo!55] (0,0) -- (0.4,0);\; núcleos $\mathrm{sinc}$
+\qquad
+\tikz[baseline=-0.6ex]\draw[ftverde, thick, densely dashed] (0,0) -- (0.4,0);\; sinal reconstruído
+\qquad
+\tikz[baseline=-0.6ex]\draw[gray!55, dashed] (0,0) -- (0.4,0);\; $x_f(t)$}
+\end{center}
+\pause\pause
+\end{frame}
+
+% ----------------------------------------------------------------------------
+%  D. VISÃO GERAL DO PROCESSO + GANCHO
+% ----------------------------------------------------------------------------
+\begin{frame}{Método Ideal}{Visão Geral no Domínio do Tempo}
+\centering
+\begin{tikzpicture}
+\begin{groupplot}[
+  group style={group size=3 by 1, horizontal sep=1.2cm},
+  ftaxis, width=0.26\textwidth
+]
+
+% (a) Sinal original
+\nextgroupplot[title={(a) Sinal original\\[1pt]{\tiny\ftstrut $x_f(t)=\cos(2\pi\cdot 2t)$}}]
+  \addplot[ftazul, thick, domain=0:\fttmax, samples=400]
+    {cos(deg(2*pi*\ftfzero*x))};
+
+% (b) Sinal amostrado (impulsos ponderados)
+\nextgroupplot[title={(b) Sinal amostrado\\[1pt]{\tiny\ftstrut $x_\delta(t)$}}]
+  \addplot[gray!55, dashed, domain=0:\fttmax, samples=400]
+    {cos(deg(2*pi*\ftfzero*x))};
+  \addplot[ycomb, ftazul, thick] coordinates {\ftamostras};
+  \addplot[ftimppos, ftazul] coordinates {\ftamospos};
+  \addplot[ftimpneg, ftazul] coordinates {\ftamosneg};
+
+% (c) Após o passa-baixas: sinal idêntico ao original
+\nextgroupplot[title={(c) Após o passa-baixas\\[1pt]{\tiny\ftstrut $x_r(t) = x_f(t)$}},
+  clip mode=individual]
+  \draw[black!45, densely dashed, thin] (axis cs:0,1) -- (axis cs:\fttmax,1);
+  \addplot[gray!55, dashed, domain=0:\fttmax, samples=400]
+    {cos(deg(2*pi*\ftfzero*x))};
+  \addplot[ftverde, thick, domain=0:\fttmax, samples=400]
+    {cos(deg(2*pi*\ftfzero*x))};
+  \draw[gray, densely dotted] (axis cs:\ftpico,1) -- (axis cs:\ftpico,1.14);
+  \node[font=\tiny, anchor=south west, inner sep=1pt] at (axis cs:\ftpico,1.12) {sem atraso};
+
+\end{groupplot}
+\end{tikzpicture}
+
+\vspace{0.4em}
+\mbox{\scriptsize
+\tikz[baseline=-0.6ex]\draw[gray!55, dashed] (0,0) -- (0.45,0); $x_f(t)$\hspace{0.7em}
+\tikz[baseline=-0.6ex]\draw[ftazul, thick] (0,0) -- (0.45,0); impulsos de área $x_f(nT_s)$\hspace{0.7em}
+\tikz[baseline=-0.6ex]\draw[ftverde, thick] (0,0) -- (0.45,0); após o passa-baixas}
+
+\vspace{0.4em}
+{\small Amplitude preservada e nenhum atraso: não há equalizador a projetar.}
+\end{frame}
+
+\begin{frame}{Método Ideal}{Visão Geral no Domínio da Frequência}
+\centering
+\begin{tikzpicture}
+\begin{groupplot}[
+  group style={group size=3 by 1, horizontal sep=1.2cm},
+  ftfreqaxis, width=0.26\textwidth
+]
+
+% (a) Espectro do sinal original
+\nextgroupplot[title={(a) Espectro original\\[1pt]{\tiny\ftstrut $X_f(f)=\frac{1}{2}[\delta(f-2)+\delta(f+2)]$}}]
+  \addplot[ftimpulso, ftazul] coordinates {(-\ftfzero,0.5) (\ftfzero,0.5)};
+
+% (b) Espectro amostrado: réplicas em n f_s, todas com a mesma amplitude
+\nextgroupplot[title={(b) Sinal amostrado\\[1pt]{\tiny\ftstrut $X_\delta(f)$}}]
+  \draw[black!55, densely dashed] (axis cs:-\ftfmax,0.5) -- (axis cs:\ftfmax,0.5);
+  \addplot[ftimpulso, ftlaranja!90!black] coordinates {\idrepmeio};
+  \addplot[ftimpulso, ftazul] coordinates {(-\ftfzero,0.5) (\ftfzero,0.5)};
+
+% (c) Após o passa-baixas: só a banda base, sem atenuação
+\nextgroupplot[title={(c) Após o passa-baixas\\[1pt]{\tiny\ftstrut $X_r(f) = X_f(f)$}}]
+  \draw[black!45, densely dashed, thin] (axis cs:-\ftfmax,0.5) -- (axis cs:\ftfmax,0.5);
+  \draw[ftroxo, densely dashed, fill=ftroxo!8] (axis cs:-\ftfc,0) rectangle (axis cs:\ftfc,0.6);
+  \node[font=\tiny, anchor=south, inner sep=1pt, yshift=4pt, ftroxo] at (axis cs:0,0.6) {$H_{PB}(f)$};
+  \addplot[ftimpulso, ftverde] coordinates {(-\ftfzero,0.5) (\ftfzero,0.5)};
+
+\end{groupplot}
+\end{tikzpicture}
+
+\vspace{0.4em}
+\mbox{\scriptsize
+\tikz[baseline=-0.6ex]\draw[black!55, densely dashed] (0,0) -- (0.45,0); envelope constante $\frac{1}{2}$\hspace{0.7em}
+\tikz[baseline=-0.6ex]\draw[ftazul, thick] (0,0) -- (0.45,0); banda base\hspace{0.7em}
+\tikz[baseline=-0.6ex]\draw[ftlaranja!90!black, thick] (0,0) -- (0.45,0); réplicas em $nf_s \pm 2$\hspace{0.7em}
+\tikz[baseline=-0.6ex]\draw[ftroxo, densely dashed, fill=ftroxo!8] (0,-0.08) rectangle (0.5,0.12);\hspace{3pt}passa-baixas}
+
+\vspace{0.4em}
+{\small Envelope constante: todas as réplicas com a mesma amplitude, portanto nenhuma
+distorção na banda base.}
+\end{frame}

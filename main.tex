@@ -7,6 +7,14 @@
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.18}
 \usetikzlibrary{arrows.meta,calc}
+
+\setbeamertemplate{caption}[numbered]
+\setbeamertemplate{bibliography item}[text]
+
+\usepackage[num]{abntex2cite}
+\citebrackets{[}{]}
+\hypersetup{hidelinks}
+
  
 % ------------------------------------------------------------------ ajustes
 \definecolor{sinalcor}{HTML}{1F4E79}
@@ -14,7 +22,7 @@
 \newcommand{\Ts}{0.11}                              % periodo de amostragem
 \newcommand{\Tau}{0.0367}                           % largura do pulso
 \newcommand{\Nam}{9}                                % ultima amostra
- 
+
 \pgfplotsset{
     pamaxis/.style={
         width=\textwidth, height=4.2cm,
@@ -28,7 +36,7 @@
         ylabel style={at={(axis description cs:0.033,1)}, anchor=south east},
     },
 }
- 
+
 \newcommand{\marcaTs}{%
     \draw[gray, {Stealth[length=4pt]}-{Stealth[length=4pt]}]
         (axis cs:0.11,-0.55) -- node[below=-2pt, font=\small, black] {$T_s$}
@@ -42,7 +50,7 @@
 
 % ---------------- Parâmetros (altere aqui) ----------------
 \newcommand{\ftfzero}{2}    % frequência de x(t) após o filtro anti-aliasing [Hz]
-\newcommand{\ftfs}{7}       % frequência de amostragem f_s [Hz]
+\newcommand{\ftfs}{5}       % frequência de amostragem f_s [Hz] (parâmetro fixo do estudo)
 \newcommand{\ftduty}{0.5}   % razão tau/T_s (0 < duty <= 1)
 \newcommand{\fttmax}{1.5}   % duração exibida [s] (3 períodos de 2 Hz)
 \newcommand{\ftpico}{0.5}   % pico onde o atraso é indicado em (c) e (d)
@@ -98,7 +106,7 @@
 %  Usa os parâmetros \ftfzero, \ftfs, \fttau e \ftA definidos acima.
 %  Espectros normalizados por tau/T_s.
 % ============================================================================
-\newcommand{\ftfmax}{25}    % faixa de frequência exibida: -fmax a fmax [Hz]
+\newcommand{\ftfmax}{18}    % faixa de frequência exibida: -fmax a fmax [Hz]
 \pgfmathsetmacro\ftfc{\ftfs/2}          % corte do passa-baixas ideal: f_s/2
 \pgfmathsetmacro\ftnulo{1/\fttau}       % primeiro nulo do sinc: 1/tau
 
@@ -117,15 +125,11 @@
 \pgfmathsetmacro\ftAmeio{0.5*\ftA}
 \newcommand{\ftstrut}{\rule[-1ex]{0pt}{3ex}}   % alinha as 2as linhas dos títulos
 
-% Cores das duas etapas nas demonstrações
-\newcommand{\ftamos}[1]{{\color{ftazul}#1}}             % etapa 1: amostragem ideal
-\newcommand{\ftret}[1]{{\color{ftlaranja!90!black}#1}}  % etapa 2: retenção (pulso h)
-
 \pgfplotsset{
   ftfreqaxis/.style={
     ftaxis,
     xmin=-\ftfmax, xmax=\ftfmax, ymin=0, ymax=0.68,
-    xtick={-14,0,14}, minor xtick={-21,-7,7,21},
+    xtick={-10,0,10}, minor xtick={-15,-5,5,15},
     ytick={0,0.25,0.5},
     xlabel={$f$ (Hz)}, axis lines=left,
     extra y ticks={}, extra x ticks={},
@@ -162,7 +166,7 @@
   ftdemof/.style={
     ftdemot,
     xmin=-\ftfmax, xmax=\ftfmax, ymin=0, ymax=1.3,
-    xtick={-14,-7,0,7,14}, minor xtick={},
+    xtick={-10,-5,0,5,10}, minor xtick={},
     ytick={1}, extra y ticks={},
     xlabel={$f$ (Hz)},
   },
@@ -205,6 +209,32 @@
   }%
 }
 
+% ============================================================================
+%  Amostragem IDEAL (topicos/ideal.tex) — prefixo \id
+%  Reaproveita \ftfzero, \ftfs, \ftTs, \fttmax e os estilos ft*.
+%  Diferença essencial: não há pulso h(t), logo as réplicas não são
+%  ponderadas pelo sinc e não existem abertura nem atraso.
+% ============================================================================
+% Réplicas de amostragem ideal com altura 1/2 (mesma escala dos slides ft)
+\def\idrepmeio{}
+\foreach \k in {-5,...,5}{%
+  \foreach \s in {-1,1}{%
+    \pgfmathsetmacro\idf{\s*\ftfzero+\k*\ftfs}%
+    \pgfmathparse{abs(\idf)<=\ftfmax ? 1 : 0}%
+    \ifnum\pgfmathresult=1 \xdef\idrepmeio{\idrepmeio (\idf,0.5)}\fi
+  }%
+}
+% Núcleos de interpolação x(nT_s) sinc(f_s(t - nT_s))
+\newcommand{\idnucleos}{%
+  \pgfplotsinvokeforeach{-4,...,14}{%
+    \addplot[ftroxo!55, thin, domain=0:\fttmax, samples=200, visible on=<2->]
+      {cos(deg(2*pi*\ftfzero*##1*\ftTs))*ftsincfs(x-##1*\ftTs)};
+  }%
+}
+% Cores das etapas na amostragem ideal
+\newcommand{\idamos}[1]{{\color{ftazul}#1}}            % trem de impulsos
+\newcommand{\idrec}[1]{{\color{ftverde!70!black}#1}}   % reconstrução
+
 % ============================================================
 % Metadata
 % ============================================================
@@ -224,55 +254,19 @@
 \maketitle % generate the title slide
 
 \input{topicos/intro}
-\input{topicos/teoric}
+\input{topicos/teoric}   
+\input{topicos/ideal}
+\input{topicos/natural}
 \input{topicos/flattop}
-\input{topicos/metodos}
+%simulacao
+\input{topicos/params}   
 
-\begin{frame}{Columns}
-	Splitting the page is easy and common.
+\begin{frame}[allowframebreaks]{Referências}
 
-	Typically, one side has a picture and the other text:
-	
-	\vspace{20pt}
-	
-	\begin{columns}
-		\begin{column}{0.6\textwidth}
-			This is the first column.\\[10pt]
-			You can have some texts here.
-		\end{column}
-		
-		\begin{column}{0.3\textwidth}
-			And this is the second one.\\[10pt]
-			You can have some pictures or tables here.
-		\end{column}
-	\end{columns}
+	\bibliography{bibliography}
 
 \end{frame}
 
-\begin{frame}{Fonts}
-	
-	The priority when choosing a font is readability.
-	
-	Here, we give some advice:
-	\begin{itemize}
-		\item Use serif (default) fonts only with high-resolution projectors or monitors.
-		\item Use \textsf{sans-serif} fonts otherwise.
-		\item Use \textit{italic} or \textbf{bold} fonts to emphasize or highlight points.
-		\item We also provide an \alert{alert} font for emphasise.
-		\item Use \texttt{monospace} fonts to display codes.
-	\end{itemize}
+\input{topicos/apendice}
 
-\end{frame}
-
-\section{Summary}
-
-\begin{frame}{Good Luck!}
-	\begin{itemize}
-		\item Enough for an introduction! You should know enough by now.
-		\item If you have corrections or suggestions, please feel free to contact \href{mailto:ruisong20@gmail.com}{me}!
-        \item You can also find this project on \href{https://github.com/wurahara/PolyU-Beamer-Slides}{Github}! Stars are welcome!
-	\end{itemize}
-\end{frame}
-
-\backmatter % generate the final slide
 \end{document}
