@@ -1,39 +1,39 @@
-\section{Fundamentação Teórica}
+\section{Teorema de Amostragem}
 
 % =========================================================
 % AMOSTRAGEM
 % =========================================================
 
-\begin{frame}{Fundamentação Teórica}{Amostragem}
-	\small
-	
-	\textbf{Amostragem} é o processo de representar um sinal contínuo
-	por meio de valores obtidos em instantes discretos de tempo
-	\cite{oppenheim1997signals}.
-	
-	\vspace{0.5em}
-	
+\begin{frame}{Teorema de Amostragem}{Definição}
+
+	Representar um sinal contínuo $x(t)$ pelos seus valores em instantes
+	discretos \cite{oppenheim1997signals}:
+
+	\vspace{0.8em}
+	\begin{columns}[T]
+		\begin{column}{0.33\textwidth}
+			\centering
+			\textbf{Instantes}
+			\[ t = nT_s,\quad n\in\mathbb{Z} \]
+		\end{column}
+		\begin{column}{0.33\textwidth}
+			\centering
+			\textbf{Taxa}
+			\[ f_s = \frac{1}{T_s} \]
+		\end{column}
+		\begin{column}{0.33\textwidth}
+			\centering
+			\textbf{Amostras}
+			\[ x[n] = x(nT_s) \]
+		\end{column}
+	\end{columns}
+
+	\vspace{1.2em}
 	\begin{itemize}
-		\item Um sinal contínuo $x(t)$ é observado nos instantes
-		\[
-		t=nT_s,\qquad n\in\mathbb{Z},
-		\]
-		em que $T_s$ é o período de amostragem.
-		
-		\item A frequência de amostragem é
-		\[
-		f_s=\frac{1}{T_s}.
-		\]
-		
-		\item A sequência de amostras pode ser representada por
-		\[
-		x[n]=x(nT_s).
-		\]
-		
-		\item A amostragem permite o processamento digital de sinais
-		originalmente contínuos.
+		\item $T_s$: período de amostragem; $f_s$: frequência de amostragem.
+		\item É o que viabiliza o processamento digital de sinais contínuos.
 	\end{itemize}
-	
+
 \end{frame}
 
 
@@ -41,36 +41,24 @@
 % NYQUIST-SHANNON
 % =========================================================
 
-\begin{frame}{Fundamentação Teórica}{Teorema da Amostragem de Nyquist-Shannon}
-	\small
-	
-	Para um sinal limitado em banda, cuja maior frequência presente seja
-	$f_{\max}$, a reconstrução perfeita é possível quando
-	\cite{oppenheim1997signals}:
-	
+\begin{frame}{Teorema de Amostragem}{Nyquist-Shannon}
+
+	Sinal limitado em banda, com maior frequência $f_{\max}$: a reconstrução
+	perfeita exige \cite{oppenheim1997signals}
+
 	\[
 	\boxed{f_s>2f_{\max}}
+	\qquad\qquad
+	2f_{\max} = \text{taxa de Nyquist}
 	\]
-	
-	\vspace{0.5em}
-	
+
+	\vspace{0.8em}
 	\begin{itemize}
-		\item $f_s$: frequência de amostragem;
-		\item $f_{\max}$: maior frequência presente no sinal;
-		\item $2f_{\max}$: \textbf{taxa de Nyquist}.
+		\item $f_s>2f_{\max}$ $\Rightarrow$ réplicas espectrais não se sobrepõem;
+		\item réplicas separadas $\Rightarrow$ um passa-baixas isola a banda base;
+		\item maior a banda do sinal, maior a taxa necessária.
 	\end{itemize}
-	
-	\vspace{0.5em}
-	
-	\textbf{Interpretação:}
-	\begin{itemize}
-		\item Se $f_s>2f_{\max}$, as réplicas espectrais não se sobrepõem.
-		\item Assim, um filtro passa-baixas ideal pode selecionar a banda
-		original e permitir a reconstrução do sinal.
-		\item Quanto maior a banda do sinal, maior deve ser a frequência
-		de amostragem.
-	\end{itemize}
-	
+
 \end{frame}
 
 
@@ -78,42 +66,19 @@
 % ALIASING E ANTI-ALIASING
 % =========================================================
 
-\begin{frame}{Fundamentação Teórica}{Aliasing e Filtro Anti-Aliasing}
-	\small
-	
-	\textbf{Aliasing} ocorre quando a frequência de amostragem é insuficiente
-	para representar adequadamente as componentes do sinal
-	\cite{oppenheim1997signals}.
-	
-	\vspace{0.5em}
-	
+\begin{frame}{Teorema de Amostragem}{Aliasing e Filtro Anti-Aliasing}
+
+	\textbf{Aliasing:} taxa insuficiente ($f_s\le2f_{\max}$) $\Rightarrow$ as
+	réplicas se sobrepõem e uma componente alta é lida como uma componente
+	de frequência menor \cite{oppenheim1997signals}.
+
+	\vspace{0.8em}
+	\textbf{Filtro anti-aliasing (AA):} atua \textbf{antes} da amostragem.
 	\begin{itemize}
-		\item Quando
-		$
-		f_s\le2f_{\max}$,
-		as réplicas espectrais podem se sobrepor.
-		
-		\item Uma componente de alta frequência pode ser interpretada,
-		após a amostragem, como uma componente de frequência menor.
-		
-		\item Esse efeito é chamado de \textbf{rebatimento espectral}
-		(aliasing).
-		
-		\item O aliasing não pode ser corrigido posteriormente apenas
-		pelo filtro de reconstrução, pois a informação original foi
-		perdida durante a amostragem.
+		\item Limita a banda do sinal, fixando $f_{\max}$;
+		\item atenua tudo acima do que a taxa consegue representar.
 	\end{itemize}
-	
-	\vspace{0.5em}
-	
-	\textbf{Filtro Anti-Aliasing (AA):}
-	\begin{itemize}
-		\item filtro aplicado \textbf{antes da amostragem};
-		\item limita a banda do sinal;
-		\item atenua componentes acima da frequência que pode ser
-		representada pela taxa de amostragem.
-	\end{itemize}
-	
+
 \end{frame}
 
 
@@ -121,39 +86,27 @@
 % MÉTODOS DE AMOSTRAGEM
 % =========================================================
 
-\begin{frame}{Fundamentação Teórica}{Métodos de Amostragem}
-	\small
-	
-	A amostragem pode ser realizada de diferentes formas, de acordo com
-	a maneira como cada amostra é mantida no tempo
-	\cite{oppenheim1997signals,lathi2012sistemas}.
-	
-	\vspace{0.5em}
-	
+\begin{frame}{Teorema de Amostragem}{Métodos de Amostragem}
+
+	Os métodos diferem na \textbf{forma como cada amostra é mantida no tempo}
+	\cite{oppenheim1997signals,lathi2012sistemas}:
+
+	\vspace{0.6em}
 	\begin{itemize}
-		\item \textbf{Amostragem ideal:}
-		as amostras são representadas como impulsos de duração
-		infinitesimal:
-		\[
-		x_s(t)=\sum_{n=-\infty}^{\infty}
-		x(nT_s)\delta(t-nT_s).
-		\]
-		
-		\item \textbf{Amostragem natural:}
-		cada amostra é representada por um pulso retangular de duração
-		$\tau$, mantendo durante o pulso o valor instantâneo do sinal
-		\cite{lathi2012sistemas}.
-		
-		\item \textbf{Amostragem Flat-Top (Sample-and-Hold):}
-		o valor da amostra é mantido constante durante todo o intervalo
-		de retenção, produzindo uma sequência de patamares.
-		
+		\item \textbf{Ideal:} impulsos de Dirac --- a amostra existe só no
+		      instante $t=nT_s$;
+		      \vspace{-0.3em}
+		      \[
+		      x_s(t)=\sum_{n=-\infty}^{\infty} x(nT_s)\,\delta(t-nT_s)
+		      \]
+		\item \textbf{Natural:} pulso de largura $\tau$ que \textbf{acompanha}
+		      o sinal durante o pulso \cite{lathi2012sistemas};
+		\item \textbf{Flat-top} (\textit{sample-and-hold}): pulso de largura
+		      $\tau$ com valor \textbf{constante} --- patamares.
 	\end{itemize}
-	
-	\vspace{0.5em}
-	
-	\textbf{Neste trabalho:} são analisados os efeitos da amostragem
-	ideal, natural e de topo plano, incluindo a influência da largura dos pulsos na
-	reconstrução do sinal.
-	
+
+	\vspace{0.8em}
+	Adiante: os três métodos, o efeito da largura $\tau$ e a respectiva
+	reconstrução.
+
 \end{frame}
